@@ -16,7 +16,7 @@ const Progress: React.FC<ProgressProps> = ({ step, steps, height }) => {
     useEffect(() => {
         Animated.timing(animatedVaule, {
             toValue: reactive,
-            duration: 300,
+            duration: 700,
             useNativeDriver: true
         }).start()
     }, [])
@@ -33,6 +33,8 @@ const Progress: React.FC<ProgressProps> = ({ step, steps, height }) => {
             }}
             style={{
                 height,
+                width: '90%',
+                alignSelf: 'center',
                 backgroundColor: theme.colors.secondary.lightGrayGreen,
                 borderRadius: height,
                 overflow: 'hidden',

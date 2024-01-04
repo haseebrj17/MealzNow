@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native'
-import React, { Children, useState } from 'react'
+import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native'
+import React, { Children, useEffect, useState } from 'react'
 import { StackNavigationProp } from '@react-navigation/stack'; // or NavigationProp from '@react-navigation/native'
 import { Stepper } from '../components'
 import { theme } from '../theme/theme';
@@ -7,77 +7,123 @@ import { useFonts } from '../hooks/useFonts';
 import { Display } from '../utils';
 import Vegetarian from '../assets/icons/Vegetarian';
 import Omnivore from '../assets/icons/Omnivore';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setFlashMessage } from '../features/flashMessages/flashMessageSlice';
 import FlashMessage from '../components/flashMessage';
+import { RouteProp } from '@react-navigation/native';
+import { RootState } from '../Store';
+import { MealTypeShimmer } from '../components/skeleton';
+import { insertCustomerProductInclusion } from '../db/methods/custmerNestedOperations';
+import { logAllTables } from '../db/DataLog';
 
 type RootStackParamList = {
-    AllergiesScreenProps: undefined;
+    AllergiesScreenProps: { outlineId: string };
+    PreferredCuisine: undefined;
 };
 
-type AllergiesScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AllergiesScreen'>;
+type AllergiesScreenNavigationProp = StackNavigationProp<RootStackParamList, 'PreferredCuisine'>;
 
 interface AllergiesScreenProps {
     navigation: AllergiesScreenNavigationProp;
+    route: RouteProp<RootStackParamList, 'AllergiesScreenProps'>;
 }
 
-const data = [
-    {
-        id: 0,
-        title: 'Vegetarian',
-        description: 'Vegetarian meals include plant-based foods and may contain dairy and eggs, but exclude meat and fish.',
-        image: <Vegetarian color={theme.colors.custom[2].stromboli} />,
-        aspectRatio: 225 / 225
-    },
-    {
-        id: 1,
-        title: 'Omnivore',
-        description: 'Omnivore meals include a mix of plant-based foods and animal products, such as meat, dairy, and eggs.',
-        image: <Omnivore color={theme.colors.custom[2].stromboli} />,
-        aspectRatio: 500 / 625
-    }
-]
+const AllergiesScreen: React.FC<AllergiesScreenProps> = ({ navigation, route }) => {
+    const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+    const [outlineId, setOutlineId] = useState<string>(route?.params?.outlineId);
+    const [data, setData] = useState<any[]>([]);
 
-const AllergiesScreen: React.FC<AllergiesScreenProps> = ({ navigation }) => {
+    const { productOutline, loadingFranchise } = useSelector(
+        (state: RootState) => state.franchise
+    );
 
-    const [selectedType, setSelectedType] = useState<number | null>(null);
-    const [disabled, setDisabled] = useState(true)
+    useEffect(() => {
+        const selectedOutline = productOutline?.find((outline: any) => outline.Id === outlineId);
+        if (selectedOutline && selectedOutline?.ProductInclusion) {
+            setData(selectedOutline?.ProductInclusion);
+            console.log('data', data);
+        }
+    }, [outlineId, productOutline]);
 
-    const handleSelectedType = (id: number) => {
-        setSelectedType(id);
-        setDisabled(false); // This will enable the button
+    useEffect(() => {
+        logAllTables();
+    }, []);
+
+    const handleSelectedType = (Id: string) => {
+        if (selectedTypes.includes(Id)) {
+            setSelectedTypes(selectedTypes.filter(type => type !== Id));
+        } else {
+            setSelectedTypes([...selectedTypes, Id]);
+        }
     };
+
+    const handleNext = async () => {
+        for (const selectedId of selectedTypes) {
+            const matchedInclusion = data.find(inclusion => inclusion.Id === selectedId);
+
+            if (matchedInclusion) {
+                const inclusionData = {
+                    inclusionId: matchedInclusion.Id,
+                    name: matchedInclusion.Name,
+                    icon: matchedInclusion.Icon,
+                    outlineId: outlineId
+                };
+
+                try {
+                    const response = await insertCustomerProductInclusion(inclusionData);
+                    console.log(`Inserted: ${response}`);
+                } catch (error) {
+                    console.error(`Error inserting inclusion: ${matchedInclusion.Id}`, error);
+                }
+            }
+        }
+        navigation.navigate('PreferredCuisine');
+    }
 
     return (
         <View
             style={{ backgroundColor: theme.colors.background.bgGrayPurple }}
         >
             <Stepper
-                title={'WHAT TYPE OF MEALS WOULD YOU PREFER?'}
+                title={'WHAT DO YOU NOT EAT?'}
                 instruction={"Your diet plan might have foods you don't eat. We will put a warning sign next to those meals. This way, you can easily change them for other meals you like."}
-                step={1}
+                step={2}
                 steps={8}
                 height={Display.setHeight(1)}
                 buttonWidth={Display.setWidth(90)}
                 buttonHeight={Display.setHeight(5)}
-                onPress={() => console.log('hello')}
+                onPress={() => handleNext()}
                 buttonTitle="NEXT"
                 buttonColor={theme.colors.primary.dark}
                 buttonTextColor={theme.colors.custom[4].snuff}
-                buttonDisabled={disabled}
+                buttonDisabled={false}
             >
-                {data?.map((item) => {
-                    return (
+                {
+                    loadingFranchise && (
+                        <MealTypeShimmer />
+                    )
+                }
+                <FlatList
+                    contentContainerStyle={{
+                        width: Display.setWidth(100),
+                        marginTop: Display.setHeight(2),
+                        height: Display.setHeight(90),
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                    }}
+                    data={data}
+                    keyExtractor={(item) => item.Id.toString()}
+                    renderItem={({ item }) => (
                         <TouchableOpacity
-                            key={item.id}
+                            key={item.Id}
                             style={{
-                                width: Display.setWidth(90),
+                                width: Display.setWidth(40),
+                                height: Display.setWidth(35),
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 display: 'flex',
                                 flexDirection: 'row',
-                                height: Display.setHeight(15),
-                                backgroundColor: item.id === selectedType ? theme.colors.accent.light : theme.colors.accent.mediumGray,
+                                backgroundColor: selectedTypes.includes(item.Id) ? theme.colors.accent.light : theme.colors.accent.mediumGray,
                                 borderRadius: Display.setHeight(1.3),
                                 shadowColor: theme.colors.primary.dark,
                                 shadowOffset: {
@@ -89,66 +135,45 @@ const AllergiesScreen: React.FC<AllergiesScreenProps> = ({ navigation }) => {
                                 elevation: 9,
                                 marginBottom: Display.setHeight(3),
                                 paddingLeft: theme.padding.small,
-                                paddingRight: theme.padding.small
+                                paddingRight: theme.padding.small,
+                                marginLeft: Display.setWidth(2),
+                                marginRight: Display.setWidth(2),
                             }}
-                            onPress={() => handleSelectedType(item?.id)}
+                            onPress={() => handleSelectedType(item?.Id)}
                         >
                             <View
                                 style={{
-                                    width: Display.setHeight(12),
-                                    height: Display.setHeight(12),
                                     alignItems: 'center',
-                                    justifyContent: 'center',
+                                    justifyContent: 'flex-end'
                                 }}
                             >
-                                {item.image}
-                            </View>
-                            <View
-                                style={{
-                                    width: (Display.setWidth(90) - Display.setHeight(12)),
-                                    height: '70%',
-                                    alignItems: 'flex-start',
-                                    justifyContent: 'space-evenly'
-                                }}
-                            >
+                                <Image
+                                    source={{ uri: item?.Icon }}
+                                    style={{
+                                        width: Display.setWidth(20),
+                                        resizeMode: 'contain',
+                                        aspectRatio: 1,
+                                        tintColor: theme.colors.custom[2].stromboli
+                                    }}
+                                />
                                 <Text
                                     style={{
-                                        fontSize: Display.setHeight(3.5),
-                                        fontFamily: 'RC',
-                                        fontWeight: '600',
+                                        fontSize: Display.setHeight(2),
+                                        marginTop: Display.setHeight(1),
+                                        fontWeight: '400',
                                         color: theme.colors.primary.dark
                                     }}
                                 >
-                                    {item.title}
-                                </Text>
-                                <Text
-                                    style={{
-                                        fontSize: Display.setHeight(1.5),
-                                        fontFamily: 'RC',
-                                        fontWeight: '600',
-                                        color: theme.colors.accent.darkGray
-                                    }}
-                                >
-                                    {item.description}
+                                    {item.Name}
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                    )
-                })}
+                    )}
+                    numColumns={2}
+                />
             </Stepper>
         </View>
     )
 }
+
 export default AllergiesScreen
-
-
-// width={Display.setWidth(90)}
-//                     height={Display.setHeight(5)}
-//                     onPress={() => console.log('hello')}
-//                     title={'NEXT'}
-//                     color={theme.colors.primary.dark}
-//                     textColor={theme.colors.custom[8].moonraker}
-//                     disabled={false}
-
-
-//                     <Progress step={1} steps={6} height={Display.setHeight(1)} />

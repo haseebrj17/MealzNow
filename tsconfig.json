@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "react",
     "lib": [
-      "es6"
+      "esnext",
+      "dom"
     ],
     "moduleResolution": "node",
     "noEmit": true,
@@ -14,8 +18,9 @@
     "target": "esnext",
     "typeRoots": [
       "./node_modules/@types",
-      "./src/types"
-    ]
+      "node_modules/yup"
+    ],
+    "skipLibCheck": true
   },
   "exclude": [
     "node_modules",

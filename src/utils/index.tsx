@@ -1,6 +1,25 @@
 import Display from "./Display";
 import { getImageAspectRatio } from "./ImageAspect";
 import { transformImageUrl } from "./UrlGenerator";
-// import useDeviceHeight from "./useDeviceHeight";
+import {
+    fDate,
+    fDateTime,
+    fTimestamp,
+    fToNow,
+    fDateVerbose,
+    fDateAdd,
+    formatTimeToAMPM
+} from "./formatTime";
 
-export { Display, getImageAspectRatio, transformImageUrl };
+export {
+    Display,
+    getImageAspectRatio,
+    transformImageUrl,
+    fDate,
+    fDateTime,
+    fTimestamp,
+    fToNow,
+    fDateVerbose,
+    fDateAdd,
+    formatTimeToAMPM
+};

@@ -16,7 +16,9 @@ export interface ThemeType {
             gray: string
             darkGray: string,
             darkerGray: string,
-            disabledGray: string
+            disabledGray: string,
+            borderGray: string,
+            textGray: string,
         };
         secondary: {
             lightGrayGreen: string,
@@ -97,14 +99,16 @@ export const theme: ThemeType = {
         },
         accent: {
             lightest: '#D2F4D7', // Very light green
+            lightGray: '#F1F1F1', // Very light gray
             light: '#ACC8B0',    // Medium light green
             medium: '#F3FCF4',  // Off-white green tint
-            lightGray: '#F1F1F1', // Very light gray
             mediumGray: '#D9D9D9', // Medium gray
             gray: '#b6b6b6', // gray
             darkGray: '#454545', // Dark gray
             darkerGray: '#393939', // Darker gray
             disabledGray: '#929292', // Disabled gray
+            borderGray: '#8F9A90', // Border gray
+            textGray: '#8c8c8c', // Text gray
         },
         secondary: {
             lightGrayGreen: '#8F9A90', // Gray with a hint of green

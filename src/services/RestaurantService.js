@@ -56,14 +56,25 @@ const getDashboard = async ({ FranchiseId }) => {
             { headers }
         );
         if (dashboardResponse?.status === 200) {
-            const banners = dashboardResponse?.data?.Banners;
-            const brands = dashboardResponse?.data?.Brands;
-            const franchiseId = dashboardResponse?.data?.FranchiseId;
             const clientId = dashboardResponse?.data?.ClientId;
+            const franchiseId = dashboardResponse?.data?.FranchiseId;
+            const banners = dashboardResponse?.data?.Banners;
+            const packages = dashboardResponse?.data?.Packages;
+            const products = dashboardResponse?.data?.Products;
+            const categories = dashboardResponse?.data?.Categories;
+            const allSubCategories = dashboardResponse?.data?.AllSubCategories;
             return {
                 status: true,
                 message: `Dashboard data fetched`,
-                data: { banners, brands, franchiseId, clientId },
+                data: {
+                    clientId,
+                    franchiseId,
+                    banners,
+                    packages,
+                    products,
+                    categories,
+                    allSubCategories
+                },
             };
         } else {
             return {

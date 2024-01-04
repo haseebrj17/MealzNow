@@ -1,9 +1,19 @@
 import HomeScreen from "./HomeScreen";
 import MealTypeScreen from "./MealTypeScreen";
 import AllergiesScreen from "./AllergiesScreen";
+import PreferredCuisineScreen from "./PreferredCuisineScreen";
+import MealPerDayScreen from "./MealPerDayScreen";
+import DeliveriesPerWeekScreen from "./DeliveriesPerWeekScreen";
+import MealsScreen from "./MealsScreen";
+import StartDateAndSlotsScreen from "./StartDateAndSlotsScreen";
 
 export {
     HomeScreen,
     MealTypeScreen,
-    AllergiesScreen
+    AllergiesScreen,
+    PreferredCuisineScreen,
+    MealPerDayScreen,
+    DeliveriesPerWeekScreen,
+    MealsScreen,
+    StartDateAndSlotsScreen,
 }

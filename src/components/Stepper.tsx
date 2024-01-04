@@ -10,6 +10,7 @@ import MN from '../assets/MN_LOGO_LG_NBG.png';
 import Progress from './Progress';
 import { useFonts } from '../hooks/useFonts';
 import Button from './Button';
+import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window')
 
@@ -17,8 +18,9 @@ type Dimension = number | `${number}%`;
 
 interface StepperProps {
     children: React.ReactNode;
-    instruction: string;
+    instruction?: string;
     title: string;
+    details?: string;
     step?: number;
     steps?: number;
     height?: number;
@@ -40,6 +42,7 @@ const Stepper: React.FC<StepperProps> = ({
     children,
     instruction,
     title,
+    details,
     step,
     steps,
     height,
@@ -51,6 +54,8 @@ const Stepper: React.FC<StepperProps> = ({
     buttonTextColor,
     buttonDisabled,
 }) => {
+
+    const navigation = useNavigation();
 
     const styles = getStyles(theme);
 
@@ -74,8 +79,10 @@ const Stepper: React.FC<StepperProps> = ({
                         alignItems: 'center',
                         justifyContent: 'center',
                         position: 'absolute',
-                        bottom: '7%'
+                        bottom: '7%',
+                        zIndex: 1,
                     }}
+                    onPress={() => navigation.goBack()}
                 >
                     <AntDesign name="arrowleft" size={Display.setHeight(3)} color={theme.colors.primary.light} />
                 </TouchableOpacity>
@@ -92,11 +99,10 @@ const Stepper: React.FC<StepperProps> = ({
             </Appbar>
             <SafeAreaView
                 style={{
-                    paddingLeft: theme.padding.medium,
-                    paddingRight: theme.padding.medium,
                     width: '100%',
                     height: Display.setHeight(100 - 28),
-                    justifyContent: 'flex-start'
+                    justifyContent: 'flex-start',
+                    backgroundColor: theme.colors.accent.lightGray,
                 }}
             >
                 <Progress step={step || 1} steps={steps || 10} height={height || Display.setHeight(1)} />
@@ -113,9 +119,26 @@ const Stepper: React.FC<StepperProps> = ({
                 >
                     {title ? title : ''}
                 </Text>
+                {
+                    details &&
+                    <Text
+                        style={{
+                            fontSize: Display.setHeight(1.7),
+                            fontFamily: 'RC',
+                            fontWeight: '400',
+                            marginTop: Display.setHeight(0.5),
+                            color: theme.colors.accent.darkGray,
+                            paddingLeft: theme.padding.medium,
+                            paddingRight: theme.padding.medium
+                        }}
+                    >
+                        {details ? details : ''}
+                    </Text>
+                }
                 <View
                     style={{
                         marginTop: Display.setHeight(2),
+                        marginBottom: Display.setHeight(3),
                         alignItems: 'center',
                         justifyContent: 'space-evenly',
                     }}
@@ -126,7 +149,7 @@ const Stepper: React.FC<StepperProps> = ({
             <View
                 style={{
                     width: '100%',
-                    height: Display.setHeight(18),
+                    height: instruction ? Display.setHeight(18) : Display.setHeight(12),
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
@@ -146,27 +169,31 @@ const Stepper: React.FC<StepperProps> = ({
                     elevation: 9,
                 }}
             >
-                <View
-                    style={{
-                        width: '100%',
-                        height: '40%',
-                        alignItems: 'center',
-                        justifyContent: 'flex-start',
-                    }}
-                >
-                    <Text
+                {
+                    instruction &&
+                    <View
                         style={{
-                            fontSize: Display.setHeight(1.3),
-                            fontFamily: 'RC',
-                            fontWeight: '500',
-                            color: theme.colors.primary.dark,
-                            paddingLeft: theme.padding.medium,
-                            paddingRight: theme.padding.medium
+                            width: '100%',
+                            height: '30%',
+                            alignItems: 'center',
+                            marginBottom: Display.setHeight(1),
+                            justifyContent: 'flex-start',
                         }}
                     >
-                        {instruction ? instruction : ''}
-                    </Text>
-                </View>
+                        <Text
+                            style={{
+                                fontSize: Display.setHeight(1.3),
+                                fontFamily: 'RC',
+                                fontWeight: '500',
+                                color: theme.colors.primary.dark,
+                                paddingLeft: theme.padding.medium,
+                                paddingRight: theme.padding.medium
+                            }}
+                        >
+                            {instruction ? instruction : ''}
+                        </Text>
+                    </View>
+                }
                 <Button
                     width={buttonWidth}
                     height={buttonHeight}

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "MealzNow",
-    "slug": "MealzNow",
+    "slug": "mealznow",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,20 +15,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "co.foodsnow.MealzNow"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "co.foodsnow.MealzNow"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "31dd2c5e-c84d-4924-b765-f101cc621013"
+        "projectId": "94e7f192-b914-4f1d-ba9c-a40eed5540aa"
       }
     },
     "runtimeVersion": {
@@ -36,6 +38,10 @@
     },
     "updates": {
       "url": "https://u.expo.dev/31dd2c5e-c84d-4924-b765-f101cc621013"
-    }
+    },
+    "plugins": [
+      "expo-build-properties"
+    ],
+    "owner": "foodsnowgmbh"
   }
 }
