@@ -8,6 +8,7 @@ export interface ThemeType {
             darker: string;
         };
         accent: {
+            lighter: string;
             lightest: string;
             medium: string;
             light: string;
@@ -98,6 +99,7 @@ export const theme: ThemeType = {
             darker: '#0C3426' // Darker green
         },
         accent: {
+            lighter: '#EFFBF1',
             lightest: '#D2F4D7', // Very light green
             lightGray: '#F1F1F1', // Very light gray
             light: '#ACC8B0',    // Medium light green

@@ -12,24 +12,24 @@ import { setFlashMessage } from '../features/flashMessages/flashMessageSlice';
 import FlashMessage from '../components/flashMessage';
 import { AppDispatch, RootState } from '../Store';
 import { fetchDashboardData } from '../features/restaurants/dashboardDataSlice';
-import { insertPreferredCategory } from '../db/methods/custmerNestedOperations';
+import { insertPreferredCategory, insertPreferredSubCategory } from '../db/methods/custmerNestedOperations';
 
 type RootStackParamList = {
-    PreferredCuisineScreenProps: undefined;
-    PreferredCategories: undefined;
+    PreferredCategoriesScreenProps: undefined;
+    MealPerDay: undefined;
 };
 
-type PreferredCuisineScreenNavigationProp = StackNavigationProp<RootStackParamList, 'PreferredCategories'>;
+type PreferredCategoriesScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MealPerDay'>;
 
-interface PreferredCuisineScreenProps {
-    navigation: PreferredCuisineScreenNavigationProp;
+interface PreferredCategoriesScreenProps {
+    navigation: PreferredCategoriesScreenNavigationProp;
 }
 
 interface AspectRatioMap {
     [key: string]: number;
 }
 
-const PreferredCuisineScreen: React.FC<PreferredCuisineScreenProps> = ({ navigation }) => {
+const PreferredCategoriesScreen: React.FC<PreferredCategoriesScreenProps> = ({ navigation }) => {
 
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
     const [categoriesData, setCategoriesData] = useState<any[]>([]);
@@ -49,7 +49,7 @@ const PreferredCuisineScreen: React.FC<PreferredCuisineScreenProps> = ({ navigat
         (state: RootState) => state.franchise
     );
 
-    const { brands, loadingDashboard } = useSelector(
+    const { categories, loadingDashboard } = useSelector(
         (state: RootState) => state.dashboard
     );
 
@@ -60,9 +60,9 @@ const PreferredCuisineScreen: React.FC<PreferredCuisineScreenProps> = ({ navigat
     }, [dispatch, franchiseDetails?.Id]);
 
     useEffect(() => {
-        console.log('categories', brands);
-        setCategoriesData(brands)
-    }, [brands]);
+        console.log('categories', categories);
+        setCategoriesData(categories)
+    }, [categories]);
 
     const handleNext = async () => {
         for (const selectedId of selectedTypes) {
@@ -70,19 +70,19 @@ const PreferredCuisineScreen: React.FC<PreferredCuisineScreenProps> = ({ navigat
 
             if (matchedCategories) {
                 const categoryData = {
-                    categoryId: matchedCategories.Id,
-                    categoryName: matchedCategories.Name,
+                    subCategoryId: matchedCategories.Id,
+                    subCategoryName: matchedCategories.Name,
                 };
 
                 try {
-                    const response = await insertPreferredCategory(categoryData);
+                    const response = await insertPreferredSubCategory(categoryData);
                     console.log(`Inserted: ${response}`);
                 } catch (error) {
                     console.error(`Error inserting inclusion: ${matchedCategories.Id}`, error);
                 }
             }
         }
-        navigation.navigate('PreferredCategories');
+        navigation.navigate('MealPerDay');
     }
 
     const updateAspectRatios = async (items: any[]) => {
@@ -107,10 +107,10 @@ const PreferredCuisineScreen: React.FC<PreferredCuisineScreenProps> = ({ navigat
     };
 
     useEffect(() => {
-        if (brands) {
-            updateAspectRatios(brands);
+        if (categories) {
+            updateAspectRatios(categories);
         }
-    }, [brands]);
+    }, [categories]);
 
     return (
         <View
@@ -173,9 +173,10 @@ const PreferredCuisineScreen: React.FC<PreferredCuisineScreenProps> = ({ navigat
                                 }}
                             >
                                 <Image
-                                    source={{ uri: item?.Logo }}
+                                    source={{ uri: item?.Thumbnail }}
                                     style={{
                                         width: Display.setHeight(8),
+                                        borderRadius: Display.setHeight(50),
                                         resizeMode: 'contain',
                                         aspectRatio: aspectRatios[item.Id] || 1,
                                     }}
@@ -217,4 +218,4 @@ const PreferredCuisineScreen: React.FC<PreferredCuisineScreenProps> = ({ navigat
     )
 }
 
-export default PreferredCuisineScreen
+export default PreferredCategoriesScreen;

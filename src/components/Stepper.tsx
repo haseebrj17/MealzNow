@@ -100,7 +100,7 @@ const Stepper: React.FC<StepperProps> = ({
             <SafeAreaView
                 style={{
                     width: '100%',
-                    height: Display.setHeight(100 - 28),
+                    height: Display.setHeight(100 - 30),
                     justifyContent: 'flex-start',
                     backgroundColor: theme.colors.accent.lightGray,
                 }}
@@ -149,7 +149,7 @@ const Stepper: React.FC<StepperProps> = ({
             <View
                 style={{
                     width: '100%',
-                    height: instruction ? Display.setHeight(18) : Display.setHeight(12),
+                    height: instruction ? Display.setHeight(20) : Display.setHeight(14),
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',

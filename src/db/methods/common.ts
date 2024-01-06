@@ -88,6 +88,46 @@ export async function getDataFromTable(tableName: string, columns: string[], whe
     });
 }
 
+export async function getDataFromTableWithLimit(
+    tableName: string,
+    columns: string[],
+    whereClause: string = '',
+    whereArgs: any[] = [],
+    limit: number | null = null
+): Promise<any[]> {
+    let query = `SELECT ${columns.join(', ')} FROM ${tableName}`;
+
+    if (whereClause) {
+        query += ` WHERE ${whereClause}`;
+    }
+
+    if (limit !== null) {
+        query += ` LIMIT ${limit}`; // Append the LIMIT clause if limit is not null
+    }
+
+    query += ';';
+
+    return new Promise((resolve, reject) => {
+        db.transaction(tx => {
+            tx.executeSql(
+                query,
+                whereArgs,
+                (_, result) => {
+                    const data = [];
+                    for (let i = 0; i < result.rows.length; i++) {
+                        data.push(result.rows.item(i));
+                    }
+                    resolve(data);
+                },
+                (_, error) => {
+                    console.error(`Error retrieving data from ${tableName}:`, error);
+                    reject(error);
+                    return false;
+                }
+            );
+        });
+    });
+}
 
 /**
  * Example usage:

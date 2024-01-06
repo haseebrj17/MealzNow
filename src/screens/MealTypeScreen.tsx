@@ -76,10 +76,6 @@ const MealTypeScreen: React.FC<MealTypeScreenProps> = ({ navigation }) => {
         setDisabled(false);
     };
 
-    useEffect(() => {
-        console.log(productOutline)
-    }, [productOutline])
-
     // if (!fontsLoaded) {
     //     return <AppLoading />;
     // }

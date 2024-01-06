@@ -9,6 +9,7 @@ import {
     DeliveriesPerWeekScreen,
     MealsScreen,
     StartDateAndSlotsScreen,
+    PreferredCategoriesScreen,
 } from "../screens";
 import { Connect } from "react-redux";
 
@@ -33,6 +34,7 @@ const Navigators = () => {
                 <Stack.Screen name="MealType" component={MealTypeScreen} />
                 <Stack.Screen name="Allergies" component={AllergiesScreen} />
                 <Stack.Screen name="PreferredCuisine" component={PreferredCuisineScreen} />
+                <Stack.Screen name="PreferredCategories" component={PreferredCategoriesScreen} />
                 <Stack.Screen name="MealPerDay" component={MealPerDayScreen} />
                 <Stack.Screen name="DeliveriesPerWeek" component={DeliveriesPerWeekScreen} />
                 <Stack.Screen name="StartDateAndSlots" component={StartDateAndSlotsScreen} />

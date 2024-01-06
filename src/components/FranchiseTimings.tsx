@@ -61,12 +61,6 @@ interface Props {
 
 const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings, startDate, onSlotSelect, selectedSlots }) => {
 
-    console.log('selectedServingDays', selectedServingDays);
-    console.log('timingString', timingString);
-    console.log('timings', timings);
-    console.log('startDate', startDate);
-    console.log('onSlotSelect', onSlotSelect);
-
     // Convert selected serving days to a lookup map for efficiency
     const selectedDaysMap = selectedServingDays.reduce((acc, day) => {
         acc[day.Name] = day;
@@ -90,8 +84,10 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
     // Render each day slot
     const renderDaySlots = (day: FranchiseTiming) => {
         const isSelected = isDaySelected(day.Day);
-        const showLunch = timingString?.includes('Lunch');
-        const showDinner = timingString?.includes('Dinner');
+        console.log('Timing String:', timingString);
+        const showLunch = timingString && timingString.includes('Lunch');
+        const showDinner = timingString && timingString.includes('Dinner');
+        console.log('Show Lunch:', showLunch, 'Show Dinner:', showDinner);
         const lunchTiming = day.ServingTimings.find(t => t.Name === 'Lunch');
         const dinnerTiming = day.ServingTimings.find(t => t.Name === 'Dinner');
 
@@ -99,8 +95,6 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
 
         const lunchSelected = selectedSlots[day.Day]?.Lunch;
         const dinnerSelected = selectedSlots[day.Day]?.Dinner;
-
-        console.log(day.ServingTimings);
 
         return (
             restaurantClosed ? (
@@ -169,7 +163,7 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
                         <Text style={styles.mealTitle}>{day.Day}</Text>
                         <NativeBaseProvider>
                             <View key={day.Id} style={styles.Container}>
-                                {lunchTiming && (
+                                {lunchTiming && showLunch && (
                                     <View style={styles.TimingContainer}>
                                         <View
                                             style={{
@@ -209,7 +203,7 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
                                         </Radio.Group>
                                     </View>
                                 )}
-                                {dinnerTiming && (
+                                {dinnerTiming && showDinner && (
                                     <View style={styles.TimingContainer}>
                                         <View
                                             style={{
@@ -264,7 +258,7 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
                                 width: Display.setWidth(80),
                                 marginTop: Display.setHeight(1),
                                 paddingLeft: theme.padding.large,
-                                marginBottom: Display.setHeight(1)
+                                marginBottom: Display.setHeight(4)
                             }}
                         >
                             <Text

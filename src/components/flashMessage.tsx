@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Snackbar } from 'react-native-paper';
-import { RootState } from '../features/RootState';
+import { RootState } from '../Store';
 import { clearFlashMessage } from '../features/flashMessages/flashMessageSlice';
 
 interface FlashMessageState {

@@ -6,6 +6,7 @@ import MealPerDayScreen from "./MealPerDayScreen";
 import DeliveriesPerWeekScreen from "./DeliveriesPerWeekScreen";
 import MealsScreen from "./MealsScreen";
 import StartDateAndSlotsScreen from "./StartDateAndSlotsScreen";
+import PreferredCategoriesScreen from "./PreferredCategoriesScreen";
 
 export {
     HomeScreen,
@@ -16,4 +17,5 @@ export {
     DeliveriesPerWeekScreen,
     MealsScreen,
     StartDateAndSlotsScreen,
+    PreferredCategoriesScreen,
 }

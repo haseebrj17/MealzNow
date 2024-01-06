@@ -61,6 +61,7 @@ const getDashboard = async ({ FranchiseId }) => {
             const banners = dashboardResponse?.data?.Banners;
             const packages = dashboardResponse?.data?.Packages;
             const products = dashboardResponse?.data?.Products;
+            const brands = dashboardResponse?.data?.Brands;
             const categories = dashboardResponse?.data?.Categories;
             const allSubCategories = dashboardResponse?.data?.AllSubCategories;
             return {
@@ -72,6 +73,7 @@ const getDashboard = async ({ FranchiseId }) => {
                     banners,
                     packages,
                     products,
+                    brands,
                     categories,
                     allSubCategories
                 },

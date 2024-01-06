@@ -8,7 +8,8 @@ import {
     fToNow,
     fDateVerbose,
     fDateAdd,
-    formatTimeToAMPM
+    formatTimeToAMPM,
+    fDateCustom
 } from "./formatTime";
 
 export {
@@ -21,5 +22,6 @@ export {
     fToNow,
     fDateVerbose,
     fDateAdd,
-    formatTimeToAMPM
+    formatTimeToAMPM,
+    fDateCustom
 };
