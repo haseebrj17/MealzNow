@@ -8,6 +8,14 @@ const getFirstTimeUse = () => {
     return AsyncStorage.getItem('isFirstTimeUse');
 };
 
+const setOrderPlaced = () => {
+    return AsyncStorage.setItem('orderPlaced', 'true');
+};
+
+const getOrderPlaced = () => {
+    return AsyncStorage.getItem('orderPlaced');
+};
+
 const setToken = token => {
     return AsyncStorage.setItem('token', token);
 };
@@ -59,6 +67,14 @@ const removeData = async (key) => {
     }
 };
 
+const setDeviceToken = async (token) => {
+    return AsyncStorage.setItem('deviceToken', token);
+}
+
+const getDeviceToken = async () => {
+    return AsyncStorage.getItem('deviceToken');
+}
+
 export default { 
     setFirstTimeUse, 
     getFirstTimeUse, 
@@ -73,4 +89,6 @@ export default {
     getLocation, 
     setLocation,
     removeData,
+    setDeviceToken,
+    getDeviceToken
 };

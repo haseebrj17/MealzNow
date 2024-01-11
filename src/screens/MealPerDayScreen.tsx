@@ -17,11 +17,11 @@ import { insertCustomerPromo, insertOrUpdateCustomerPackage } from '../db/method
 import { insertCustomerOrderPromo, insertOrUpdateCustomerOrderedPackage } from '../db/methods/cartNestedOperations';
 
 type RootStackParamList = {
-    MealPerDayScreenProps: undefined;
-    DeliveriesPerWeek:  { packageId: string | null };
+    MealPerDay: undefined;
+    DeliveriesPerWeek: { packageId: string | null };
 };
 
-type MealPerDayScreenNavigationProp = StackNavigationProp<RootStackParamList, 'DeliveriesPerWeek'>;
+type MealPerDayScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MealPerDay'>;
 
 interface MealPerDayScreenProps {
     navigation: MealPerDayScreenNavigationProp;
@@ -60,8 +60,10 @@ const MealPerDayScreen: React.FC<MealPerDayScreenProps> = ({ navigation }) => {
     };
 
     const handlePromoInsertion = async (mealz: any) => {
+        const promoId: string = new Date().getTime().toString()
         if (mealz.Discount > 0) {
             const promo = {
+                promoId: promoId,
                 type: mealz.Title,
                 name: mealz.Title,
                 percent: mealz.Discount

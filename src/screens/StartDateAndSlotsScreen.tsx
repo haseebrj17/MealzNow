@@ -26,14 +26,19 @@ interface DayWithDate {
     date: string;
 }
 
+interface SlotDetail {
+    Id: string;
+    Time: string;
+}
+
 interface DayWithDateAndSlots extends DayWithDate {
     dayId: string;
     slots: MealSelection;
 }
 
 interface MealSelection {
-    Lunch?: string;
-    Dinner?: string;
+    Lunch?: SlotDetail;
+    Dinner?: SlotDetail;
 }
 
 interface SelectedSlots {
@@ -45,24 +50,23 @@ interface ServingDays {
     Name: string,
 }
 
-interface Slot {
-    Id: string;
-    SlotStart: string;
-    SlotEnd: string;
-}
-
 type RootStackParamList = {
-    StartDateAndSlotsScreenProps: { packageId: string, selectedServingDays: ServingDays[] };
-    Meals: { packageId: string | null, generatedDates: DayWithDateAndSlots[] | null };
+    StartDateAndSlots: {
+        packageId: string | null,
+        selectedServingDays: ServingDays[]
+    };
+    Meals: {
+        packageId: string | null,
+        generatedDates: DayWithDateAndSlots[] | null
+    };
 };
 
-type StartDateAndSlotsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Meals'>;
+type StartDateAndSlotsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'StartDateAndSlots'>;
 
 interface StartDateAndSlotsScreenProps {
     navigation: StartDateAndSlotsScreenNavigationProp;
-    route: RouteProp<RootStackParamList, 'StartDateAndSlotsScreenProps'>;
+    route: RouteProp<RootStackParamList, 'StartDateAndSlots'>;
 }
-
 const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navigation, route }) => {
 
     const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
@@ -73,12 +77,12 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
     const [selectedSlots, setSelectedSlots] = useState<SelectedSlots>({});
     const [numberOfWeeks, setNumberOfWeeks] = useState<number | null>(null);
 
-    const updateSelectedSlot = (day: string, mealType: 'Lunch' | 'Dinner', slotStart: string) => {
+    const updateSelectedSlot = (day: string, mealType: 'Lunch' | 'Dinner', slotStart: string, slotId: string) => {
         setSelectedSlots((prevSlots: SelectedSlots) => ({
             ...prevSlots,
             [day]: {
                 ...prevSlots[day],
-                [mealType]: slotStart
+                [mealType]: { Time: slotStart, Id: slotId }
             }
         }));
     };
@@ -99,11 +103,21 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
                 const dayName = dayNames[currentDate.getDay()];
                 const dayObj = selectedDays.find(d => d.Name === dayName);
                 if (dayObj && selectedDayNames.includes(dayName)) {
+                    const daySlots = selectedSlots[dayName];
+                    let slotDetails: MealSelection = {};
+
+                    if (daySlots?.Lunch) {
+                        slotDetails.Lunch = daySlots.Lunch;
+                    }
+                    if (daySlots?.Dinner) {
+                        slotDetails.Dinner = daySlots.Dinner;
+                    }
+
                     dates.push({
                         dayName,
                         dayId: dayObj.Id,
-                        date: new Date(currentDate).toString(),
-                        slots: selectedSlots[dayName] || {}
+                        date: currentDate.toISOString().split('T')[0],
+                        slots: slotDetails
                     });
                 }
                 currentDate.setDate(currentDate.getDate() + 1);
@@ -113,6 +127,7 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
         return dates;
     };
 
+
     const handleNavigation = () => {
         if (validateSlots()) {
             const generatedDates = generateDatesForSelectedDays(
@@ -121,29 +136,30 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
                 numberOfWeeks || 1,
                 selectedSlots
             );
-            console.log('generatedDates:', generatedDates);
 
             // Navigate to the Meals screen with generatedDates
-            navigation.navigate('Meals', { packageId: route?.params?.packageId, generatedDates: generatedDates });
+            navigation.navigate('Meals', { packageId: route?.params?.packageId as string, generatedDates: generatedDates as DayWithDateAndSlots[] });
         } else {
             // Handle the case where slots are not properly filled
             alert("Please ensure all slots are filled correctly.");
         }
     };
-
     const validateSlots = () => {
         let isValid = true;
 
-        // Extract the days when only lunch or only dinner is served
-        const daysWithOnlyLunch = franchiseTimings.filter(t => t.Open && t.ServingTimings.some(st => st.Name === 'Lunch') && !t.ServingTimings.some(st => st.Name === 'Dinner')).map(t => t.Day);
-        const daysWithOnlyDinner = franchiseTimings.filter(t => t.Open && t.ServingTimings.some(st => st.Name === 'Dinner') && !t.ServingTimings.some(st => st.Name === 'Lunch')).map(t => t.Day);
+        console.log(selectedSlots);
 
-        for (let day of route?.params?.selectedServingDays || []) {
+        for (const day of route?.params?.selectedServingDays || []) {
             const daySlots = selectedSlots[day.Name];
-            const isLunchRequired = timing?.includes('Lunch') && !daysWithOnlyDinner.includes(day.Name); // Check if lunch is required and the day is not a dinner-only day
-            const isDinnerRequired = timing?.includes('Dinner') && !daysWithOnlyLunch.includes(day.Name); // Check if dinner is required and the day is not a lunch-only day
 
-            if ((isLunchRequired && !daySlots?.Lunch) || (isDinnerRequired && !daySlots?.Dinner)) {
+            // If 'Lunch' is part of the timing string, check if lunch is selected
+            if (timing?.includes('Lunch') && !daySlots?.Lunch) {
+                isValid = false;
+                break;
+            }
+
+            // If 'Dinner' is part of the timing string, check if dinner is selected
+            if (timing?.includes('Dinner') && !daySlots?.Dinner) {
                 isValid = false;
                 break;
             }
@@ -151,6 +167,7 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
 
         return isValid;
     };
+
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
@@ -162,7 +179,6 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
 
     const handleConfirm = (date: Date) => {
         setDate(date);
-        console.log("A date has been picked: ", date);
         hideDatePicker();
     };
 
@@ -187,7 +203,6 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
                 const timingString: string | null = franchiseSetting?.MealsPerDay.find((meal) => meal.Timings === timing)?.Title ?? null;
                 setTiming(timingString);
                 setNumberOfWeeks(data[0]?.numberOfWeeks);
-                console.log('timingString', timingString);
             }).catch(error => {
                 console.error(error);
             });
@@ -310,6 +325,7 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
                         />
                     </View>
                     <DateTimePickerModal
+                        display='inline'
                         isVisible={isDatePickerVisible}
                         mode="date"
                         onConfirm={handleConfirm}
@@ -318,8 +334,6 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
                         modalPropsIOS={
                             {
                                 animationType: 'fade',
-                                transparent: true,
-                                statusBarTranslucent: true,
                                 backdropOpacity: 0.4,
                                 backdropColor: theme.colors.background.bgGrayPurple,
                             }

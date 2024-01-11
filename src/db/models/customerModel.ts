@@ -1,7 +1,7 @@
 export const CustomerTableQuery = `
 CREATE TABLE IF NOT EXISTS Customer (
     _id TEXT PRIMARY KEY,
-    type TEXT NOT NULL,
+    type TEXT,
     fullName TEXT NOT NULL,
     emailAddress TEXT NOT NULL,
     contactNumber TEXT NOT NULL,

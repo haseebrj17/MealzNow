@@ -319,7 +319,7 @@ export async function insertOrUpdateCustomerPayment(paymentData: { paymentType: 
     });
 }
 
-export async function insertCustomerPromo(promoData: { type: string, name: string, percent: string }) {
+export async function insertCustomerPromo(promoData: { promoId: string, type: string, name: string, percent: string }) {
     return new Promise((resolve, reject) => {
         const checkQuery = `SELECT * FROM CustomerPromo WHERE type = ? AND name = ? AND percent = ?;`;
         db.transaction(tx => {

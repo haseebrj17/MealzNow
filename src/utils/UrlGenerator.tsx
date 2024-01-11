@@ -1,6 +1,6 @@
 interface TransformImageUrlProps {
     originalUrl: string;
-    size: number;
+    size: string;
 }
 
 export const transformImageUrl = ({ originalUrl, size }: TransformImageUrlProps): string => {
@@ -8,6 +8,5 @@ export const transformImageUrl = ({ originalUrl, size }: TransformImageUrlProps)
     const urlParts = originalUrl.split('/');
     const relevantParts = urlParts.slice(4);
     const transformedUrl = baseUrl + relevantParts.join('/');
-    console.log(transformedUrl);
     return transformedUrl;
 };

@@ -23,15 +23,15 @@ interface ServingDays {
 }
 
 type RootStackParamList = {
-    DeliveriesPerWeekScreenProps: { packageId: string | null };
+    DeliveriesPerWeek: { packageId: string | null };
     StartDateAndSlots: { packageId: string | null, selectedServingDays: ServingDays[] };
 };
 
-type DeliveriesPerWeekScreenNavigationProp = StackNavigationProp<RootStackParamList, 'StartDateAndSlots'>;
+type DeliveriesPerWeekScreenNavigationProp = StackNavigationProp<RootStackParamList, 'DeliveriesPerWeek'>;
 
 interface DeliveriesPerWeekScreenProps {
     navigation: DeliveriesPerWeekScreenNavigationProp;
-    route: RouteProp<RootStackParamList, 'DeliveriesPerWeekScreenProps'>;
+    route: RouteProp<RootStackParamList, 'DeliveriesPerWeek'>;
 }
 
 const DeliveriesPerWeekScreen: React.FC<DeliveriesPerWeekScreenProps> = ({ navigation, route }) => {
@@ -126,7 +126,7 @@ const DeliveriesPerWeekScreen: React.FC<DeliveriesPerWeekScreenProps> = ({ navig
                     contentContainerStyle={{
                         width: Display.setWidth(100),
                         marginTop: Display.setHeight(2),
-                        height: Display.setHeight(50),
+                        height: Display.setHeight(60),
                         alignItems: 'center',
                         justifyContent: 'flex-start',
                     }}
@@ -245,7 +245,7 @@ const DeliveriesPerWeekScreen: React.FC<DeliveriesPerWeekScreenProps> = ({ navig
                                             justifyContent: 'center',
                                             display: 'flex',
                                             flexDirection: 'row',
-                                            backgroundColor: theme.colors.accent.light,
+                                            backgroundColor: theme.colors.accent.mediumGray,
                                             borderRadius: Display.setHeight(1.3),
                                             shadowColor: theme.colors.primary.dark,
                                             shadowOffset: {

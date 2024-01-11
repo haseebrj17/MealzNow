@@ -16,7 +16,7 @@ function Separator({ width, color, height }: Props) {
             style={{
                 width: width,
                 height: height,
-                backgroundColor: color
+                backgroundColor: color,
             }}
         />
     )

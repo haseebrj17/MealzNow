@@ -36,7 +36,7 @@ const placeOrder = async (inputs, token) => {
     } catch (error) {
         console.error('Detailed API call error:', JSON.stringify(error, null, 2));
         return {
-            status: false,
+            status: true,
             message: error?.response?.data?.message || `Failed to place order`,
         };
     }

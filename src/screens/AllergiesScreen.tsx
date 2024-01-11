@@ -17,15 +17,15 @@ import { insertCustomerProductInclusion } from '../db/methods/custmerNestedOpera
 import { logAllTables } from '../db/DataLog';
 
 type RootStackParamList = {
-    AllergiesScreenProps: { outlineId: string };
+    Allergies: { outlineId: string };
     PreferredCuisine: undefined;
 };
 
-type AllergiesScreenNavigationProp = StackNavigationProp<RootStackParamList, 'PreferredCuisine'>;
+type AllergiesScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Allergies'>;
 
 interface AllergiesScreenProps {
     navigation: AllergiesScreenNavigationProp;
-    route: RouteProp<RootStackParamList, 'AllergiesScreenProps'>;
+    route: RouteProp<RootStackParamList, 'Allergies'>;
 }
 
 const AllergiesScreen: React.FC<AllergiesScreenProps> = ({ navigation, route }) => {

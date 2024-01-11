@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS CustomerOrderDays (
 
 export const CustomerOrderPromoTableQuery = `
 CREATE TABLE IF NOT EXISTS CustomerOrderPromo (
+    promoId TEXT PRIMARY KEY,
     type TEXT NOT NULL,
     name TEXT NOT NULL,
     percent TEXT NOT NULL
@@ -46,10 +47,10 @@ export const ProductByTimingTableQuery = `
 CREATE TABLE IF NOT EXISTS ProductByTiming (
     productTimingId TEXT PRIMARY KEY,
     dayId TEXT NOT NULL,
-    timeOfDayId TEXT NOT NULL, -- Retain this for other logic or categorization
-    fulfilled INTEGER NOT NULL,
+    timeOfDayId TEXT NOT NULL,
+    fulfilled INTEGER,
     timeOfDay TEXT NOT NULL,
-    deliveryTimings TEXT NOT NULL,
+    deliveryTimings TEXT,
     name TEXT NOT NULL,
     detail TEXT NOT NULL,
     estimatedDeliveryTime TEXT,

@@ -10,36 +10,6 @@ interface GeneralState {
     location: any;
 }
 
-// interface UserData {
-//     Id: string;
-//     FullName: string;
-//     EmailAdress: string,
-//     ContactNumber: string,
-//     UserRole: string,
-//     FranchiseId: string
-// }
-
-// interface Location {
-//     Id: string;
-//     StreetAddress: string;
-//     PostalCode: string;
-//     House: string;
-//     District: string;
-//     UnitNumber: string;
-//     FloorNumber: string;
-//     Notes: string;
-//     Tag: string;
-//     IsDefault: boolean;
-//     Latitude: number;
-//     Longitude: number;
-//     CityName: string | null;
-//     CountryName: string | null;
-//     StateName: string | null;
-//     CustomerId: string;
-//     City: {
-//         Name: string;
-//     };
-// }
 
 const initialState: GeneralState = {
     isAppLoading: true,
@@ -94,7 +64,7 @@ export default generalSlice.reducer;
 export const appStart = () => async (dispatch: any) => {
     try {
         const isFirstTimeUse = await StorageService.getFirstTimeUse();
-        dispatch(setIsFirstTimeUse(isFirstTimeUse ? false : true));
+        dispatch(setIsFirstTimeUse(!isFirstTimeUse));
 
         const token = await StorageService.getToken();
         if (token) {
@@ -113,3 +83,36 @@ export const appStart = () => async (dispatch: any) => {
         dispatch(setIsAppLoading(false));
     }
 };
+
+
+
+// interface UserData {
+//     Id: string;
+//     FullName: string;
+//     EmailAdress: string,
+//     ContactNumber: string,
+//     UserRole: string,
+//     FranchiseId: string
+// }
+
+// interface Location {
+//     Id: string;
+//     StreetAddress: string;
+//     PostalCode: string;
+//     House: string;
+//     District: string;
+//     UnitNumber: string;
+//     FloorNumber: string;
+//     Notes: string;
+//     Tag: string;
+//     IsDefault: boolean;
+//     Latitude: number;
+//     Longitude: number;
+//     CityName: string | null;
+//     CountryName: string | null;
+//     StateName: string | null;
+//     CustomerId: string;
+//     City: {
+//         Name: string;
+//     };
+// }

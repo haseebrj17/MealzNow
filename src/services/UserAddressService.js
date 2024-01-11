@@ -16,7 +16,7 @@ const handleResponse = (response, successMessage) => {
     } else {
         return {
             status: false,
-            message: response?.data?.message || 'Unknown error occurred',
+            message: response || 'Unknown error occurred',
         };
     }
 };
@@ -25,25 +25,23 @@ const addUserAddress = async (inputs, token) => {
     console.log(`UserService | addUserAddress`);
     try {
         let requestBody = {
-            Id: null,
             StreetAddress: inputs?.StreetAddress,
             House: inputs?.House,
+            PostalCode: inputs?.PostalCode,
+            CityName: inputs?.CityName,
             District: inputs?.District,
             UnitNumber: inputs?.UnitNumber,
             FloorNumber: inputs?.FloorNumber,
+            StateName: inputs?.StateName,
+            CountryName: inputs?.CountryName,
             Notes: inputs?.Notes,
-            Tag: inputs?.Tag,
             IsDefault: inputs?.IsDefault,
+            Tag: inputs?.Tag,
             Latitude: inputs?.Latitude,
             Longitude: inputs?.Longitude,
-            CityName: inputs?.CityName,
-            CustomerId: inputs?.CustomerId,
-            PostalCode: inputs?.PostalCode,
-            CountryName: inputs?.CountryName,
-            StateName: inputs?.StateName
         };
 
-        console.log('Request body:', requestBody);
+        console.log('Request body:', requestBody, token);
 
         let response = await axios.post(
             `${ApiContants.BACKEND_API.BASE_API_URL}${ApiContants.BACKEND_API.ADD_ADDRESS}`,
@@ -100,27 +98,24 @@ const updateUserAddress = async (user, address, token) => {
     }
 };
 
-const getUserAddresses = async ({ Id, token}) => {
+const getUserAddresses = async (token) => {
     console.log("UserService | getUserAddresses");
     try {
-        let requestBody = {
-            Id: Id
-        };
+        console.log(token)
         let response = await axios.post(
             `${ApiContants.BACKEND_API.BASE_API_URL}${ApiContants.BACKEND_API.GET_ADDRESS}`,
-            requestBody,
+            {},
             {
                 headers: authHeader(token),
             }
         );
-        console.log(response)
 
         return handleResponse(response, 'Address fetched successfully');
     } catch (error) {
         return {
             status: false,
-            message: error?.response?.data?.message
-                ? error?.response?.data?.message
+            message: error?.response?.data
+                ? error?.response?.data
                 : `Failed to fetch Address`,
         }
     }

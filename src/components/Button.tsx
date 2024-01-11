@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 18,
         letterSpacing: 1,
-        fontFamily: 'RC'
     },
 });
 

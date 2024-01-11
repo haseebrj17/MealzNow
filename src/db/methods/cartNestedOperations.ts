@@ -109,7 +109,7 @@ export async function insertIntoCustomerOrderDays(data: { dayId: string, day: st
     });
 }
 
-export async function insertCustomerOrderPromo(promoData: { type: string, name: string, percent: string }) {
+export async function insertCustomerOrderPromo(promoData: { promoId: string, type: string, name: string, percent: string }) {
     return new Promise((resolve, reject) => {
         // Check for existing promo with the same details
         const checkQuery = `SELECT * FROM CustomerOrderPromo WHERE type = ? AND name = ? AND percent = ?;`;
@@ -217,21 +217,14 @@ export async function getOrCreateOrderId(): Promise<string> {
     }
 }
 
-export async function createNewDayAndGetId(): Promise<string> {
-    // Generate a new dayId
+export async function createNewDayAndGetId(dayDate: { day: string, deliveryDate: string, orderId: string }): Promise<string> {
     const dayId = `day_${new Date().getTime()}`;
-
-    // Default values for day and deliveryDate
-    const day = 'New Day'; // Replace with actual logic
-    const deliveryDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
-
-    const orderId = await getOrCreateOrderId();
 
     const newDayData = {
         dayId,
-        day,
-        deliveryDate,
-        orderId
+        day: dayDate.day,
+        deliveryDate: dayDate.deliveryDate,
+        orderId: dayDate.orderId
     };
 
     await insertIntoTable('ProductByDay', newDayData);
@@ -239,11 +232,24 @@ export async function createNewDayAndGetId(): Promise<string> {
     return dayId;
 }
 
-export async function insertProductByTiming(timingData: { productTimingId: string, dayId?: string, timeOfDayId: string, fulfilled: number, timeOfDay: string, deliveryTimings: string, name: string, detail: string, estimatedDeliveryTime?: string, spiceLevel?: number, type?: string, ingredientSummary: string, image: string, price: number }) {
+export async function insertProductByTiming(timingData: {
+    productTimingId: string,
+    dayId: string,
+    timeOfDayId: string,
+    fulfilled: number | null | undefined,
+    timeOfDay: string,
+    deliveryTimings: string | null | undefined,
+    name: string,
+    detail: string,
+    estimatedDeliveryTime?: string | null | undefined,
+    spiceLevel?: number | null | undefined,
+    type?: string | null | undefined,
+    ingredientSummary: string,
+    image: string,
+    price: number
+}) {
     try {
-        const dayId = await createNewDayAndGetId();
-        const fullTimingData = { ...timingData, dayId };
-        return insertIntoTable('ProductByTiming', fullTimingData);
+        return insertIntoTable('ProductByTiming', timingData);
     } catch (error) {
         console.error('Error inserting data into ProductByTiming:', error);
         throw error;

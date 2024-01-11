@@ -1,7 +1,7 @@
 import { Provider } from 'react-redux';
 import { store } from './src/Store';
 import React, { useEffect } from 'react';
-import Navigators from "./src/navigators";
+import Navigators from "./src/navigators/index.js";
 import FlashMessage from './src/components/flashMessage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { initializeDatabase } from './src/db/Db';

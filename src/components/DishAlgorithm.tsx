@@ -109,14 +109,19 @@ interface DayWithDate {
     date: string;
 }
 
+interface SlotDetail {
+    Id: string;
+    Time: string;
+}
+
 interface DayWithDateAndSlots extends DayWithDate {
     dayId: string;
     slots: MealSelection;
 }
 
 interface MealSelection {
-    Lunch?: string;
-    Dinner?: string;
+    Lunch?: SlotDetail;
+    Dinner?: SlotDetail;
 }
 
 interface UserPreferences {
@@ -136,6 +141,8 @@ interface PackagePerks {
 }
 
 interface MealPlan {
+    dayId: string;
+    day: string;
     date: string;
     meals: MealsForTheDay;
 }
@@ -147,6 +154,8 @@ interface MealsForTheDay {
 }
 
 interface MealDetails {
+    timing: string;
+    timingId: string;
     dish: Dish;
     perks: Perks;
 }
@@ -200,15 +209,29 @@ export function createMealPlan(userPreferences: UserPreferences, dishes: Dish[])
     userPreferences.generatedDates?.forEach(date => {
         const mealsForTheDay: MealsForTheDay = {};
 
-        Object.keys(date.slots).forEach(slot => {
-            const selectedDish = selectDishForMeal(filteredDishes, userPreferences.preferredCategories.map(cat => cat.categoryId));
-            mealsForTheDay[slot] = {
-                dish: selectedDish,
+        if (date.slots.Lunch) {
+            const selectedDishForLunch = selectDishForMeal(filteredDishes, userPreferences.preferredCategories.map(cat => cat.categoryId));
+            mealsForTheDay["Lunch"] = {
+                timing: date.slots.Lunch.Time,
+                timingId: date.slots.Lunch.Id,
+                dish: selectedDishForLunch,
                 perks: packagePerks[userPreferences.packageType]
             };
-        });
+        }
+
+        if (date.slots.Dinner) {
+            const selectedDishForDinner = selectDishForMeal(filteredDishes, userPreferences.preferredCategories.map(cat => cat.categoryId));
+            mealsForTheDay["Dinner"] = {
+                timing: date.slots.Dinner.Time,
+                timingId: date.slots.Dinner.Id,
+                dish: selectedDishForDinner,
+                perks: packagePerks[userPreferences.packageType]
+            };
+        }
 
         mealPlanArray.push({
+            dayId: date.dayId,
+            day: date.dayName,
             date: date.date,
             meals: mealsForTheDay
         });

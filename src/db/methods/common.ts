@@ -6,6 +6,7 @@ export async function insertIntoTable(tableName: string, data: any) {
     const placeholders = values.map(() => '?').join(', ');
     const query = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders});`;
 
+    console.log('query and values', query, values);
     try {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
@@ -16,8 +17,9 @@ export async function insertIntoTable(tableName: string, data: any) {
                 );
             });
         });
+        console.log('Data inserted successfully');
     } catch (error) {
-        console.error('Error inserting data:', error);
+        console.log('Error inserting data:', error);
         throw error;
     }
 }

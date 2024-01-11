@@ -1,24 +1,14 @@
 import { db } from "../Db";
 import { insertIntoTable } from "./common";
 
-export async function insertIntoCart(cartData: { orderId: string, totalBill: number, totalItems: number, orderDeliveryDateTime: string, instructions?: string, customerId: string, customerAddressId: string, franchiseId: string, customerOrderedPackageId: string, customerOrderPromoId?: string, customerOrderPaymentId?: string }): Promise<void> {
+export async function insertIntoCart(cartData: { _id: string, orderId: string, totalBill: number, totalItems: number, orderDeliveryDateTime?: string, instructions?: string | null | undefined, customerId?: string | null | undefined, customerAddressId?: string | null | undefined, franchiseId?: string | null | undefined, customerOrderedPackageId?: string | null | undefined, customerOrderPromoId?: string | null | undefined, customerOrderPaymentId?: string | null | undefined }): Promise<void> {
     try {
-        // Verify or add foreign keys
-        await verifyOrAddForeignKey('Customer', cartData.customerId);
-        await verifyOrAddForeignKey('CustomerAddress', cartData.customerAddressId);
-        await verifyOrAddForeignKey('Franchise', cartData.franchiseId);
-        await verifyOrAddForeignKey('CustomerOrderedPackage', cartData.customerOrderedPackageId);
-        if (cartData.customerOrderPromoId) {
-            await verifyOrAddForeignKey('CustomerOrderPromo', cartData.customerOrderPromoId);
-        }
-        if (cartData.customerOrderPaymentId) {
-            await verifyOrAddForeignKey('CustomerOrderPayment', cartData.customerOrderPaymentId);
-        }
-
-        // Insert data into Cart table
         await insertIntoTable('Cart', cartData);
+        return Promise.resolve();
+        console.log('Cart data inserted successfully');
     } catch (error) {
-        console.error('Error inserting data into Cart:', error);
+        console.log('Error inserting data into Cart:', error);
+        return Promise.reject(error);
         throw error;
     }
 }

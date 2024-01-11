@@ -11,9 +11,15 @@ const register = async user => {
         let requestBody = {
             Id: null,
             FullName: user?.FullName,
-            EmailAdress: user?.EmailAdress,
+            EmailAddress: user?.EmailAddress,
             ContactNumber: user?.ContactNumber,
-            Password: user?.Password
+            Password: user?.Password,
+            CustomerDevice: [
+                {
+                    DeviceId: user?.CustomerDevice[0].deviceId,
+                    IsActive: user?.CustomerDevice[0].isActive,
+                }
+            ]
         };
         let registerResponse = await AuthRequest.post(
             ApiContants.BACKEND_API.REGISTER,
@@ -41,13 +47,14 @@ const register = async user => {
 const login = async user => {
     try {
         let requestBody = {
-            EmailAdress: user?.EmailAdress,
-            Password: user?.Password,
+            EmailAddress: user?.EmailAddress,
+            Password: user?.Password
         };
         let loginResponse = await AuthRequest.post(
             ApiContants.BACKEND_API.LOGIN,
             requestBody
         );
+        console.log(loginResponse)
         if (loginResponse?.status === 200) {
             return {
                 status: true,
@@ -83,7 +90,7 @@ const checkUserExist = async (type, value) => {
 const phoneVerification = async codeData => {
     try {
         let requestBody = {
-            VerificationCode: codeData?.code,
+            Code: codeData?.code,
             Id: codeData?.id
         };
         console.log(requestBody)

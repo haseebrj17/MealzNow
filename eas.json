@@ -6,13 +6,32 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "channel": "development"
+      "channel": "development",
+      "env": {
+        "GOOGLE_LOCATION_AUTO_COMPLETE_IOS": "AIzaSyAEyiqDwR9yrgOvusmQRsPrLuLTP_mt7Gg",
+        "GOOGLE_LOCATION_AUTO_COMPLETE_ANDROID": "AIzaSyDQbJCae7BP4axPrGUxZH7C1NFU3tSjTA4"
+      }
     },
     "preview": {
       "distribution": "internal",
-      "channel": "preview"
+      "channel": "preview",
+      "env": {
+        "GOOGLE_LOCATION_AUTO_COMPLETE_IOS": "AIzaSyAEyiqDwR9yrgOvusmQRsPrLuLTP_mt7Gg",
+        "GOOGLE_LOCATION_AUTO_COMPLETE_ANDROID": "AIzaSyDQbJCae7BP4axPrGUxZH7C1NFU3tSjTA4"
+      }
     },
     "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "ios": {
+        "buildConfiguration": "Release",
+        "distribution": "store"
+      },
+      "env": {
+        "GOOGLE_LOCATION_AUTO_COMPLETE_IOS": "AIzaSyAEyiqDwR9yrgOvusmQRsPrLuLTP_mt7Gg",
+        "GOOGLE_LOCATION_AUTO_COMPLETE_ANDROID": "AIzaSyDQbJCae7BP4axPrGUxZH7C1NFU3tSjTA4"
+      },
       "channel": "production"
     }
   },

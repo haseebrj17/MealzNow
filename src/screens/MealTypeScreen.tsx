@@ -19,6 +19,7 @@ import { logAllTables } from '../db/DataLog';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import Fonts from '../assets/fonts/Fonts';
+import { initializeDatabase } from '../db/Db';
 
 const config = require('../../package.json').projectName;
 const CLIENT_NAME = config.name;
@@ -28,17 +29,23 @@ interface AspectRatioMap {
 }
 
 type RootStackParamList = {
-    MealTypeScreenProps: undefined;
+    MealType: undefined;
     Allergies: { outlineId: string | null };
+    PreferredCuisine: undefined;
 };
 
-type MealTypeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Allergies'>;
+type MealTypeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MealType'>;
 
 interface MealTypeScreenProps {
     navigation: MealTypeScreenNavigationProp;
 }
 
 const MealTypeScreen: React.FC<MealTypeScreenProps> = ({ navigation }) => {
+
+    useEffect(() => {
+        initializeDatabase();
+    }, []);
+
 
     const [fontsLoaded, setFontsLoaded] = useState(false);
     const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -86,25 +93,29 @@ const MealTypeScreen: React.FC<MealTypeScreenProps> = ({ navigation }) => {
             console.error("Outline not found");
             return;
         }
-        
+
         const outlineData = {
             outlineId: outline.Id,
             title: outline.Title,
             description: outline.Description,
             icon: outline.Icon
         };
-    
+
         try {
             const res = await insertOrUpdateCustomerProductOutline(outlineData);
             console.log(res);
             if (res) {
-                navigation.navigate('Allergies', { outlineId: selectedType });
+                if (outlineData.title === 'Vegetarian') {
+                    navigation.navigate('PreferredCuisine');
+                } else {
+                    navigation.navigate('Allergies', { outlineId: selectedType });
+                }
             }
         } catch (error) {
             console.error(error);
         }
     };
-    
+
 
     const updateAspectRatios = async (items: any[]) => {
         const ratios: AspectRatioMap = {};

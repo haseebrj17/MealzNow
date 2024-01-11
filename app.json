@@ -2,31 +2,41 @@
   "expo": {
     "name": "MealzNow",
     "slug": "mealznow",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./src/assets/MNPublishingLogo512.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./src/assets/MNPublishingLogo512.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#08242D"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "co.foodsnow.MealzNow"
+      "supportsTablet": false,
+      "bundleIdentifier": "co.foodsnow.MealzNow",
+      "runtimeVersion": {
+        "policy": "sdkVersion"
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We use your location to offer a personalized experience by showing you nearby restaurants and ensuring accurate delivery services.",
+        "NSLocationAlwaysUsageDescription": "Our app needs to access your location even when not in use to provide ongoing delivery updates and notify you when your order is nearby."
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./src/assets/MNPublishingLogo512.png",
         "backgroundColor": "#ffffff"
+      },
+      "runtimeVersion": {
+        "policy": "sdkVersion"
       },
       "package": "co.foodsnow.MealzNow"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./src/assets/MNPublishingLogo512.png"
     },
     "extra": {
       "eas": {
@@ -37,7 +47,7 @@
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/31dd2c5e-c84d-4924-b765-f101cc621013"
+      "url": "https://u.expo.dev/94e7f192-b914-4f1d-ba9c-a40eed5540aa"
     },
     "plugins": [
       "expo-build-properties"

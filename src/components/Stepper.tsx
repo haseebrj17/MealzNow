@@ -208,8 +208,6 @@ const Stepper: React.FC<StepperProps> = ({
     )
 }
 
-export default Stepper
-
 const getStyles = (theme: ThemeType): StyleSheet.NamedStyles<Styles> => StyleSheet.create({
     // container: {
     //     flex: 1,
@@ -245,7 +243,7 @@ const getStyles = (theme: ThemeType): StyleSheet.NamedStyles<Styles> => StyleShe
     },
     AppBar: {
         backgroundColor: theme.colors.primary.dark,
-        height: Display.setHeight(10),
+        height: Display.setHeight(12),
         width: '100%',
         justifyContent: 'flex-start',
         alignItems: 'flex-end',
@@ -253,3 +251,5 @@ const getStyles = (theme: ThemeType): StyleSheet.NamedStyles<Styles> => StyleShe
         paddingRight: theme.padding.medium
     }
 });
+
+export default Stepper

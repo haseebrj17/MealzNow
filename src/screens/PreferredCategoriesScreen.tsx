@@ -15,11 +15,11 @@ import { fetchDashboardData } from '../features/restaurants/dashboardDataSlice';
 import { insertPreferredCategory, insertPreferredSubCategory } from '../db/methods/custmerNestedOperations';
 
 type RootStackParamList = {
-    PreferredCategoriesScreenProps: undefined;
+    PreferredCategories: undefined;
     MealPerDay: undefined;
 };
 
-type PreferredCategoriesScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MealPerDay'>;
+type PreferredCategoriesScreenNavigationProp = StackNavigationProp<RootStackParamList, 'PreferredCategories'>;
 
 interface PreferredCategoriesScreenProps {
     navigation: PreferredCategoriesScreenNavigationProp;

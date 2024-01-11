@@ -7,9 +7,14 @@ import { theme } from '../theme/theme';
 import Separator from './Separator';
 import { Entypo, AntDesign } from "@expo/vector-icons";
 
+interface SlotDetail {
+    Id: string;
+    Time: string;
+}
+
 interface MealSelection {
-    Lunch?: string;
-    Dinner?: string;
+    Lunch?: SlotDetail;
+    Dinner?: SlotDetail;
 }
 
 interface SelectedSlots {
@@ -56,7 +61,7 @@ interface Props {
     timings: FranchiseTimings;
     startDate: Date;
     selectedSlots: SelectedSlots;
-    onSlotSelect: (day: string, mealType: 'Lunch' | 'Dinner', slotStart: string) => void;
+    onSlotSelect: (day: string, mealType: 'Lunch' | 'Dinner', slotStart: string, slotId: string) => void;
 }
 
 const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings, startDate, onSlotSelect, selectedSlots }) => {
@@ -84,10 +89,8 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
     // Render each day slot
     const renderDaySlots = (day: FranchiseTiming) => {
         const isSelected = isDaySelected(day.Day);
-        console.log('Timing String:', timingString);
         const showLunch = timingString && timingString.includes('Lunch');
         const showDinner = timingString && timingString.includes('Dinner');
-        console.log('Show Lunch:', showLunch, 'Show Dinner:', showDinner);
         const lunchTiming = day.ServingTimings.find(t => t.Name === 'Lunch');
         const dinnerTiming = day.ServingTimings.find(t => t.Name === 'Dinner');
 
@@ -180,21 +183,25 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
                                         </View>
                                         <Radio.Group
                                             name={`${day.Day}-lunchGroup`}
-                                            value={lunchSelected}
-                                            onChange={(value) => onSlotSelect(day.Day, 'Lunch', value)}
+                                            value={lunchSelected?.Id}
+                                            onChange={(value) => {
+                                                const selectedSlot = lunchTiming.ServingTime.find(slot => slot.Id === value);
+                                                if (selectedSlot) {
+                                                    onSlotSelect(day.Day, 'Lunch', selectedSlot.SlotStart, selectedSlot.Id);
+                                                }
+                                            }}
                                         >
-                                            <VStack space={2}
-                                                style={styles.Vstack}
-                                            >
+                                            <VStack space={2} style={styles.Vstack}>
                                                 {lunchTiming.ServingTime.map((slot) => (
-                                                    <Radio key={slot.Id} value={slot.SlotStart} my={2}
+                                                    <Radio
+                                                        key={slot.Id}
+                                                        value={slot.Id}
+                                                        my={2}
                                                         colorScheme={"muted"}
                                                         backgroundColor={theme.colors.accent.lightGray}
                                                         style={styles.radio}
                                                     >
-                                                        <Text
-                                                            style={styles.radioText}
-                                                        >
+                                                        <Text style={styles.radioText}>
                                                             {`${formatTimeToAMPM(slot.SlotStart)} - ${formatTimeToAMPM(slot.SlotEnd)}`}
                                                         </Text>
                                                     </Radio>
@@ -220,22 +227,25 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
                                         </View>
                                         <Radio.Group
                                             name={`${day.Day}-dinnerGroup`}
-                                            value={dinnerSelected}
-                                            onChange={(value) => onSlotSelect(day.Day, 'Dinner', value)}
+                                            value={dinnerSelected?.Id}
+                                            onChange={(value) => {
+                                                const selectedSlot = dinnerTiming.ServingTime.find(slot => slot.Id === value);
+                                                if (selectedSlot) {
+                                                    onSlotSelect(day.Day, 'Dinner', selectedSlot.SlotStart, selectedSlot.Id);
+                                                }
+                                            }}
                                         >
-                                            <VStack
-                                                space={2}
-                                                style={styles.Vstack}
-                                            >
+                                            <VStack space={2} style={styles.Vstack}>
                                                 {dinnerTiming.ServingTime.map((slot) => (
-                                                    <Radio key={slot.Id} value={slot.SlotStart} my={2}
+                                                    <Radio
+                                                        key={slot.Id}
+                                                        value={slot.Id}
+                                                        my={2}
                                                         colorScheme={"muted"}
                                                         backgroundColor={theme.colors.accent.lightGray}
                                                         style={styles.radio}
                                                     >
-                                                        <Text
-                                                            style={styles.radioText}
-                                                        >
+                                                        <Text style={styles.radioText}>
                                                             {`${formatTimeToAMPM(slot.SlotStart)} - ${formatTimeToAMPM(slot.SlotEnd)}`}
                                                         </Text>
                                                     </Radio>

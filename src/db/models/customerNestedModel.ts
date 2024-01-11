@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS CustomerPayment (
 
 export const CustomerPromoTableQuery = `
 CREATE TABLE IF NOT EXISTS CustomerPromo (
+    promoId TEXT PRIMARY KEY,
     type TEXT NOT NULL,
     name TEXT NOT NULL,
     percent TEXT NOT NULL
