@@ -12,7 +12,6 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { ThemeType, theme } from '../theme/theme';
 import MN from '../assets/MN_LOGO_LG_NBG.png';
-import { dropAllTables } from '../db/DropData';
 
 const { width, height } = Dimensions.get('window');
 
@@ -238,8 +237,6 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
 
                     await dispatch(clearToken());
                     await dispatch(clearUserData());
-
-                    await dropAllTables();
 
                     Alert.alert(
                         'Erfolg',

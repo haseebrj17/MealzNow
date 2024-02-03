@@ -954,13 +954,13 @@ const CartScreen: React.FC<CartScreenProps> = ({ navigation, route }) => {
                     </View>
                     <FlatList
                         data={userAddresses}
-                        contentContainerStyle={{
+                        style={{
                             width: Display.setWidth(90),
-                            height: Display.setHeight(20),
                             marginBottom: theme.padding.small,
-                            marginTop: theme.padding.small,
+                            marginTop: theme.padding.small
+                        }}
+                        contentContainerStyle={{
                             alignItems: 'center',
-                            justifyContent: 'flex-start',
                         }}
                         renderItem={({ item, index }) => (
                             <TouchableOpacity
@@ -1083,7 +1083,7 @@ const ConditionalRender = ({
                         height={Display.setHeight(5)}
                         onPress={handelNext}
                         title={'Place Order'}
-                        color={theme.colors.primary.dark}
+                        color={theme.colors.primary.darker}
                         textColor={theme.colors.custom[4].snuff}
                         disabled={false}
                     />
@@ -1101,7 +1101,7 @@ const ConditionalRender = ({
                             packageId: packageId
                         })}
                         title={'Sign Up to Checkout'}
-                        color={theme.colors.primary.dark}
+                        color={theme.colors.primary.darker}
                         textColor={theme.colors.custom[4].snuff}
                         disabled={false}
                     />

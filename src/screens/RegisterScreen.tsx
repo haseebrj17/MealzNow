@@ -441,7 +441,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, route }) =>
     const handleConfirmCode = async () => {
         try {
             const response = await AuthenticationService.phoneVerification(codeData);
-            // console.log(codeData, response)
             setIsLoading(false);
 
             if (response?.status) {
@@ -453,14 +452,13 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, route }) =>
                     name: 'check',
                     verified: true,
                 });
-                await StorageService.setToken(response?.data?.Token).then(() => {
-                    dispatch(setToken(response?.data?.Token));
-                })
+                await StorageService.setToken(response?.data?.Token)
+                dispatch(setToken(response?.data?.Token));
+
                 const decodedData = jwt_Decode(response?.data?.Token)
-                console.log(decodedData);
-                await StorageService.setUserData(decodedData).then(() => {
-                    dispatch(setUserData(decodedData))
-                })
+                await StorageService.setUserData(decodedData)
+                dispatch(setUserData(decodedData))
+
                 setTimeout(() => {
                     navigation.navigate('AddressAccess', {
                         data: route?.params?.data,

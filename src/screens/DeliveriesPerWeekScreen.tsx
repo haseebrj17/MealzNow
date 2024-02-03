@@ -15,7 +15,6 @@ import { RouteProp } from '@react-navigation/native';
 import { RootState } from '../Store';
 import { insertOrUpdateCustomerPackage } from '../db/methods/custmerNestedOperations';
 import { insertOrUpdateCustomerOrderedPackage } from '../db/methods/cartNestedOperations';
-import { logAllTables } from '../db/DataLog';
 
 interface ServingDays {
     Id: string;
@@ -40,10 +39,6 @@ const DeliveriesPerWeekScreen: React.FC<DeliveriesPerWeekScreenProps> = ({ navig
     const [disabled, setDisabled] = useState(true)
     const [packageId, setPackageId] = useState<string | null>(route?.params?.packageId);
     const [servingDays, setServingDays] = useState<any[]>([]);
-
-    // useEffect(() => {
-    //     logAllTables();
-    // }, []);
 
     const [weekCount, setWeekCount] = useState(2);
 
@@ -117,7 +112,7 @@ const DeliveriesPerWeekScreen: React.FC<DeliveriesPerWeekScreenProps> = ({ navig
                 buttonHeight={Display.setHeight(5)}
                 onPress={() => handleNext()}
                 buttonTitle="NEXT"
-                buttonColor={theme.colors.primary.dark}
+                buttonColor={theme.colors.primary.darker}
                 buttonTextColor={theme.colors.custom[4].snuff}
                 buttonDisabled={disabled}
                 details={"Minimum 3 days a week."}

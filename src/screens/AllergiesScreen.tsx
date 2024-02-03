@@ -14,7 +14,6 @@ import { RouteProp } from '@react-navigation/native';
 import { RootState } from '../Store';
 import { MealTypeShimmer } from '../components/skeleton';
 import { insertCustomerProductInclusion } from '../db/methods/custmerNestedOperations';
-import { logAllTables } from '../db/DataLog';
 
 type RootStackParamList = {
     Allergies: { outlineId: string };
@@ -44,10 +43,6 @@ const AllergiesScreen: React.FC<AllergiesScreenProps> = ({ navigation, route }) 
             console.log('data', data);
         }
     }, [outlineId, productOutline]);
-
-    useEffect(() => {
-        logAllTables();
-    }, []);
 
     const handleSelectedType = (Id: string) => {
         if (selectedTypes.includes(Id)) {
@@ -94,7 +89,7 @@ const AllergiesScreen: React.FC<AllergiesScreenProps> = ({ navigation, route }) 
                 buttonHeight={Display.setHeight(5)}
                 onPress={() => handleNext()}
                 buttonTitle="NEXT"
-                buttonColor={theme.colors.primary.dark}
+                buttonColor={theme.colors.primary.darker}
                 buttonTextColor={theme.colors.custom[4].snuff}
                 buttonDisabled={false}
             >
@@ -106,10 +101,8 @@ const AllergiesScreen: React.FC<AllergiesScreenProps> = ({ navigation, route }) 
                 <FlatList
                     contentContainerStyle={{
                         width: Display.setWidth(100),
-                        marginTop: Display.setHeight(2),
-                        height: Display.setHeight(90),
+                        marginTop: Display.setHeight(0.5),
                         alignItems: 'center',
-                        justifyContent: 'flex-start',
                     }}
                     data={data}
                     keyExtractor={(item) => item.Id.toString()}

@@ -15,9 +15,9 @@
     "moduleResolution": "node",
     "noEmit": true,
     "strict": true,
-    "target": "esnext",
+    "target": "es2020",
     "typeRoots": [
-      "./node_modules/@types",
+      "node_modules/@types",
       "node_modules/yup"
     ],
     "skipLibCheck": true

@@ -125,7 +125,7 @@ const PreferredCuisineScreen: React.FC<PreferredCuisineScreenProps> = ({ navigat
                 buttonHeight={Display.setHeight(5)}
                 onPress={() => handleNext()}
                 buttonTitle="NEXT"
-                buttonColor={theme.colors.primary.dark}
+                buttonColor={theme.colors.primary.darker}
                 buttonTextColor={theme.colors.custom[4].snuff}
                 buttonDisabled={false}
                 details={"You can choose between multiple Restaurants/Cuisines."}

@@ -1,78 +1,94 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MMKV } from 'react-native-mmkv';
+
+const storage = new MMKV();
 
 const setFirstTimeUse = () => {
-    return AsyncStorage.setItem('isFirstTimeUse', 'true');
+    return storage.set('isFirstTimeUse', 'true');
 };
 
 const getFirstTimeUse = () => {
-    return AsyncStorage.getItem('isFirstTimeUse');
+    return storage.getString('isFirstTimeUse');
 };
 
 const setOrderPlaced = () => {
-    return AsyncStorage.setItem('orderPlaced', 'true');
+    return storage.set('orderPlaced', 'true');
 };
 
 const getOrderPlaced = () => {
-    return AsyncStorage.getItem('orderPlaced');
+    return storage.getString('orderPlaced');
 };
 
 const setToken = token => {
-    return AsyncStorage.setItem('token', token);
+    return new Promise((resolve, reject) => {
+        try {
+            storage.set('token', token);
+            resolve(true);
+        } catch (error) {
+            reject(error);
+        }
+    });
 };
 
 const getToken = () => {
-    return AsyncStorage.getItem('token');
+    return storage.getString('token');
 };
 
 const setUserData = userData => {
-    return AsyncStorage.setItem('userData', JSON.stringify(userData));
+    return new Promise((resolve, reject) => {
+        try {
+            storage.set('userData', JSON.stringify(userData));
+            resolve(true);
+        } catch (error) {
+            reject(error);
+        }
+    });
 };
 
 const getUserData = () => {
-    return AsyncStorage.getItem('userData');
+    return storage.getString('userData');
 };
 
 const setAppleUser = (val) => {
-    return AsyncStorage.setItem('appleUser', JSON.stringify(val));
+    return storage.set('appleUser', JSON.stringify(val));
 }
 
 const setGoogleUser = (val) => {
-    return AsyncStorage.setItem('googleUser', JSON.stringify(val));
+    return storage.set('googleUser', JSON.stringify(val));
 }
 
 const getAppleUser = async () => {
-    const appleUser = await AsyncStorage.getItem('appleUser');
+    const appleUser = await storage.getString('appleUser');
     return appleUser !== null ? JSON.parse(appleUser) : null;
 }
 
 const getGoogleUser = async () => {
-    const googleUser = await AsyncStorage.getItem('googleUser');
+    const googleUser = await storage.getString('googleUser');
     return googleUser !== null ? JSON.parse(googleUser) : null;
 }
 
 const setLocation = async (location) => {
-    return AsyncStorage.setItem('location', JSON.stringify(location))
+    return storage.set('location', JSON.stringify(location))
 }
 
 const getLocation = async () => {
-    const location = await AsyncStorage.getItem('location');
+    const location = await storage.getString('location');
     return location !== null ? JSON.parse(location) : null;
 }
 
 const removeData = async (key) => {
     try {
-        await AsyncStorage.removeItem(key);
+        await storage.removeItem(key);
     } catch (error) {
         console.error(`Error removing data for key ${key}:`, error);
     }
 };
 
 const setDeviceToken = async (token) => {
-    return AsyncStorage.setItem('deviceToken', token);
+    return storage.set('deviceToken', token);
 }
 
 const getDeviceToken = async () => {
-    return AsyncStorage.getItem('deviceToken');
+    return storage.getString('deviceToken');
 }
 
 export default { 

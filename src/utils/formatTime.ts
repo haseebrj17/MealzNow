@@ -60,7 +60,7 @@ function getOrdinal(day: number): string {
 export function fDateCustom(dateString: string) {
   try {
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
       throw new Error('Invalid date');
     }
     const formattedDate = format(date, 'EEEE MMM d'); // Use 'd' instead of 'do'

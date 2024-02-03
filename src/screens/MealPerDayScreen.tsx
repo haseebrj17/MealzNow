@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setFlashMessage } from '../features/flashMessages/flashMessageSlice';
 import FlashMessage from '../components/flashMessage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { logAllTables } from '../db/DataLog';
 import { AppDispatch, RootState } from '../Store';
 import { insertCustomerPromo, insertOrUpdateCustomerPackage } from '../db/methods/custmerNestedOperations';
 import { insertCustomerOrderPromo, insertOrUpdateCustomerOrderedPackage } from '../db/methods/cartNestedOperations';
@@ -37,10 +36,6 @@ const MealPerDayScreen: React.FC<MealPerDayScreenProps> = ({ navigation }) => {
         setSelectedType(Id);
         setDisabled(false);
     };
-
-    // useEffect(() => {
-    //     logAllTables();
-    // }, []);
 
     const dispatch = useDispatch<AppDispatch>();
 
@@ -122,7 +117,7 @@ const MealPerDayScreen: React.FC<MealPerDayScreenProps> = ({ navigation }) => {
                 buttonHeight={Display.setHeight(5)}
                 onPress={() => insertData()}
                 buttonTitle="NEXT"
-                buttonColor={theme.colors.primary.dark}
+                buttonColor={theme.colors.primary.darker}
                 buttonTextColor={theme.colors.custom[4].snuff}
                 buttonDisabled={disabled}
             >

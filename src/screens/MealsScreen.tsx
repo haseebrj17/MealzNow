@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setFlashMessage } from '../features/flashMessages/flashMessageSlice';
 import FlashMessage from '../components/flashMessage';
 import { MaterialCommunityIcons, AntDesign, Entypo } from '@expo/vector-icons';
-import { logAllTables } from '../db/DataLog';
 import { RouteProp } from '@react-navigation/native';
 import { RootState } from '../Store';
 import { getDataFromTable, getDataFromTableWithLimit } from '../db/methods/common';
@@ -24,7 +23,6 @@ import { BlurView } from 'expo-blur';
 import { number } from 'prop-types';
 import { createNewDayAndGetId, insertProductByTiming } from '../db/methods/cartNestedOperations';
 import { insertIntoCart } from '../db/methods/cartOperations';
-import { dropAllTables } from '../db/DropData';
 
 interface Package {
     Id: string;
@@ -484,10 +482,6 @@ const ModalContent = ({ popoverVisible, setPopoverVisible, item, initialRef }: P
 }
 
 const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
-
-    useEffect(() => {
-        logAllTables();
-    }, []);
 
     const { franchiseSetting, franchiseDetails, loadingFranchise } = useSelector(
         (state: RootState) => state.franchise
@@ -1018,7 +1012,7 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
                     packageType: selectedType
                 })}
                 buttonTitle="NEXT"
-                buttonColor={theme.colors.primary.dark}
+                buttonColor={theme.colors.primary.darker}
                 buttonTextColor={theme.colors.custom[4].snuff}
                 buttonDisabled={disabled}
                 details={""}

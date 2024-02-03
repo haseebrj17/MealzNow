@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setFlashMessage } from '../features/flashMessages/flashMessageSlice';
 import FlashMessage from '../components/flashMessage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { logAllTables } from '../db/DataLog';
 import { AppDispatch, RootState } from '../Store';
 import { insertCustomerPromo, insertOrUpdateCustomerPackage } from '../db/methods/custmerNestedOperations';
 import { insertCustomerOrderPromo, insertOrUpdateCustomerOrderedPackage } from '../db/methods/cartNestedOperations';
@@ -50,6 +49,30 @@ interface ServingDays {
     Name: string,
 }
 
+
+interface ServingTimeSlot {
+    Id: string;
+    SlotStart: string;
+    SlotEnd: string;
+}
+
+interface ServingTiming {
+    Id: string;
+    Name: string;
+    ServingTime: ServingTimeSlot[];
+}
+
+interface FranchiseTiming {
+    Id: string;
+    Day: string;
+    OpeningTime: string;
+    ClosingTime: string;
+    Open: boolean;
+    ServingTimings: ServingTiming[];
+}
+
+type FranchiseTimings = FranchiseTiming[];
+
 type RootStackParamList = {
     StartDateAndSlots: {
         packageId: string | null,
@@ -69,6 +92,10 @@ interface StartDateAndSlotsScreenProps {
 }
 const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navigation, route }) => {
 
+    const { franchiseTimings, franchiseSetting, loadingFranchise } = useSelector(
+        (state: RootState) => state.franchise
+    );
+
     const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
     const [disabled, setDisabled] = useState(true)
     const [date, setDate] = useState<Date>(fDateAdd(new Date(), 1));
@@ -76,6 +103,30 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
     const [timing, setTiming] = useState<string | null>(null);
     const [selectedSlots, setSelectedSlots] = useState<SelectedSlots>({});
     const [numberOfWeeks, setNumberOfWeeks] = useState<number | null>(null);
+
+    const initializeSelectedSlots = (servingDays: ServingDays[], franchiseTimings: FranchiseTimings, timing: string | null): SelectedSlots => {
+        const initialSlots: SelectedSlots = {};
+        servingDays.forEach(day => {
+            const dayTiming = franchiseTimings.find(t => t.Day === day.Name);
+            const showLunch = timing?.includes('Lunch');
+            const showDinner = timing?.includes('Dinner');
+            const lunchTiming = showLunch ? dayTiming?.ServingTimings.find(t => t.Name === 'Lunch')?.ServingTime[0] : undefined;
+            const dinnerTiming = showDinner ? dayTiming?.ServingTimings.find(t => t.Name === 'Dinner')?.ServingTime[0] : undefined;
+
+            initialSlots[day.Name] = {
+                Lunch: lunchTiming ? { Id: lunchTiming.Id, Time: lunchTiming.SlotStart } : undefined,
+                Dinner: dinnerTiming ? { Id: dinnerTiming.Id, Time: dinnerTiming.SlotStart } : undefined
+            };
+        });
+        return initialSlots;
+    };
+
+    useEffect(() => {
+        if (route?.params?.selectedServingDays && franchiseTimings && timing) {
+            const initialSlots = initializeSelectedSlots(route?.params?.selectedServingDays, franchiseTimings, timing);
+            setSelectedSlots(initialSlots);
+        }
+    }, [route?.params?.selectedServingDays, franchiseTimings, timing]);
 
     const updateSelectedSlot = (day: string, mealType: 'Lunch' | 'Dinner', slotStart: string, slotId: string) => {
         setSelectedSlots((prevSlots: SelectedSlots) => ({
@@ -183,14 +234,6 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
     };
 
     useEffect(() => {
-        logAllTables();
-    }, [route.params.selectedServingDays]);
-
-    const { franchiseTimings, franchiseSetting, loadingFranchise } = useSelector(
-        (state: RootState) => state.franchise
-    );
-
-    useEffect(() => {
         let timing: number | any[] | null = null;
         const timings = async () => {
             await getDataFromTable(
@@ -224,7 +267,7 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
                 buttonHeight={Display.setHeight(5)}
                 onPress={handleNavigation}
                 buttonTitle="NEXT"
-                buttonColor={theme.colors.primary.dark}
+                buttonColor={theme.colors.primary.darker}
                 buttonTextColor={theme.colors.custom[4].snuff}
                 buttonDisabled={!validateSlots()}
                 details={"Select the date you want to start your subscription from and your preferred delivery time."}
@@ -233,7 +276,6 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
                     <View
                         style={{
                             marginTop: Display.setHeight(1.5),
-                            marginBottom: Display.setHeight(1),
                             width: Display.setWidth(90),
                             alignSelf: 'center',
                             alignItems: 'flex-start',
@@ -294,7 +336,7 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
                     <View
                         style={{
                             marginTop: Display.setHeight(1),
-                            marginBottom: Display.setHeight(1),
+                            marginBottom: Display.setHeight(10),
                             width: Display.setWidth(90),
                             alignSelf: 'center',
                             alignItems: 'flex-start',

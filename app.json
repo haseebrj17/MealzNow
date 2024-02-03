@@ -2,7 +2,8 @@
   "expo": {
     "name": "MealzNow",
     "slug": "mealznow",
-    "version": "1.0.3",
+    "scheme": "mealznow",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./src/assets/MNPublishingLogo512.png",
     "userInterfaceStyle": "light",

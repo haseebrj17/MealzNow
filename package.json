@@ -1,6 +1,6 @@
 {
   "name": "mealznow",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.2.3",
+    "@expo/config-plugins": "~7.2.2",
+    "@expo/prebuild-config": "~6.2.4",
     "@expo/webpack-config": "^19.0.0",
     "@gluestack-style/react": "^1.0.30",
+    "@gluestack-ui/config": "^1.0.11",
     "@gluestack-ui/themed": "^1.0.33",
     "@gorhom/bottom-sheet": "^4.5.1",
     "@react-native-async-storage/async-storage": "1.18.2",
@@ -23,9 +26,11 @@
     "@react-navigation/material-top-tabs": "^6.6.5",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/stack": "^6.3.20",
+    "@realm/react": "^0.6.2",
     "@reduxjs/toolkit": "^1.9.7",
     "@rneui/base": "^4.0.0-rc.8",
     "@rneui/themed": "^4.0.0-rc.8",
+    "@tanstack/react-query": "^5.17.19",
     "@types/react-native-extra-dimensions-android": "^1.2.3",
     "@types/yup": "^0.32.0",
     "axios": "^1.6.2",
@@ -43,6 +48,7 @@
     "expo-linear-gradient": "~12.3.0",
     "expo-location": "~16.1.0",
     "expo-notifications": "~0.20.1",
+    "expo-splash-screen": "~0.20.5",
     "expo-sqlite": "~11.3.3",
     "expo-status-bar": "~1.6.0",
     "expo-updates": "~0.18.19",
@@ -75,11 +81,10 @@
     "react-native-web": "~0.19.6",
     "react-navigation": "^5.0.0",
     "react-redux": "^8.1.3",
+    "realm": "^12.5.1",
     "redux": "^4.2.1",
     "redux-persist": "^6.0.0",
-    "yup": "^1.3.3",
-    "@expo/prebuild-config": "~6.2.4",
-    "@expo/config-plugins": "~7.2.2"
+    "yup": "^1.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

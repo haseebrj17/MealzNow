@@ -1,32 +1,30 @@
-import { CustomerTableQuery } from './customerModel';
+import { 
+    CartSchema,
+    CustomerOrderedPackageSchema,
+    CustomerOrderPromoSchema,
+    CustomerOrderPaymentSchema,
+    ProductByDaySchema,
+    ProductByTimingSchema,
+    OrderedProductExtraDippingSchema,
+    OrderedProductExtraToppingSchema,
+    OrderedProductSidesSchema,
+    OrderedProductDessertSchema,
+    OrderedProductDrinksSchema,
+    OrderedProductChoicesSchema
+} from "./cartModel";
 import {
-    CustomerPackageTableQuery,
-    CustomerPaymentTableQuery,
-    CustomerPromoTableQuery,
-    CustomerDeviceTableQuery,
-    CustomerPasswordTableQuery,
-    PreferenceTableQuery,
-    CustomerProductOutlineTableQuery,
-    CustomerProductInclusionTableQuery,
-    PreferredCategoriesTableQuery,
-    PreferredSubCategoriesTableQuery
-} from './customerNestedModel';
-import { CartTableQuery } from './cartModel';
-import {
-    CustomerOrderedPackageTableQuery,
-    CustomerOrderPromoTableQuery,
-    CustomerOrderPaymentTableQuery,
-    ProductByDayTableQuery,
-    ProductByTimingTableQuery,
-    OrderedProductChoicesTableQuery,
-    OrderedProductExtraDippingTableQuery,
-    OrderedProductExtraToppingTableQuery,
-    OrderedProductSidesTableQuery,
-    OrderedProductDessertTableQuery,
-    OrderedProductDrinksTableQuery
-} from './cartNestedModel';
+    CustomerSchema,
+    PreferenceSchema,
+    PreferredCategoriesSchema,
+    PreferredSubCategoriesSchema,
+    CustomerProductOutlineSchema,
+    CustomerProductInclusionSchema,
+    CustomerPackageSchema,
+    CustomerPaymentSchema,
+    CustomerPromoSchema,
+    CustomerPasswordSchema,
+    CustomerDeviceSchema
+} from "./customerModel";
 
-export * from './customerModel';
-export * from './customerNestedModel';
-export * from './cartModel';
-export * from './cartNestedModel';
+export * from "./cartModel";
+export * from "./customerModel";

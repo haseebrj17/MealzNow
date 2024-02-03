@@ -15,11 +15,9 @@ import { fetchFranchiseData } from '../features/franchise/franchiseSlice';
 import { AppDispatch, RootState } from '../Store';
 import { MealTypeShimmer } from '../components/skeleton';
 import { insertOrUpdateCustomerProductOutline } from '../db/methods/custmerNestedOperations';
-import { logAllTables } from '../db/DataLog';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import Fonts from '../assets/fonts/Fonts';
-import { initializeDatabase } from '../db/Db';
 
 const config = require('../../package.json').projectName;
 const CLIENT_NAME = config.name;
@@ -42,11 +40,6 @@ interface MealTypeScreenProps {
 
 const MealTypeScreen: React.FC<MealTypeScreenProps> = ({ navigation }) => {
 
-    useEffect(() => {
-        initializeDatabase();
-    }, []);
-
-
     const [fontsLoaded, setFontsLoaded] = useState(false);
     const [selectedType, setSelectedType] = useState<string | null>(null);
     const [disabled, setDisabled] = useState(true);
@@ -66,10 +59,6 @@ const MealTypeScreen: React.FC<MealTypeScreenProps> = ({ navigation }) => {
             setFontsLoaded(true);
         }
         loadFonts();
-    }, []);
-
-    useEffect(() => {
-        logAllTables();
     }, []);
 
     useEffect(() => {
@@ -158,7 +147,7 @@ const MealTypeScreen: React.FC<MealTypeScreenProps> = ({ navigation }) => {
                 buttonHeight={Display.setHeight(5)}
                 onPress={() => insertData()}
                 buttonTitle="NEXT"
-                buttonColor={theme.colors.primary.dark}
+                buttonColor={theme.colors.primary.darker}
                 buttonTextColor={theme.colors.custom[4].snuff}
                 buttonDisabled={disabled}
             >

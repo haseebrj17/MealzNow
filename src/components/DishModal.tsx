@@ -247,6 +247,7 @@ const DishModal: React.FC<Props> = ({ popoverVisible, setPopoverVisible, item, t
                                 {url?.dish.ProductAllergy?.map((allergy, index) => {
                                     return (
                                         <Text
+                                            key={index}
                                             style={{
                                                 fontSize: Display.setHeight(1.4),
                                                 fontWeight: '500',
@@ -299,6 +300,7 @@ const DishModal: React.FC<Props> = ({ popoverVisible, setPopoverVisible, item, t
                                 {url?.dish.ProductPrice?.map((price, index) => {
                                     return (
                                         <View
+                                            key={index}
                                             style={{
                                                 width: Display.setWidth(16),
                                                 flexDirection: 'row',

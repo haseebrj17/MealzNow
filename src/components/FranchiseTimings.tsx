@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { NativeBaseProvider, Radio, VStack } from "native-base";
 import { BlurView } from 'expo-blur';
 import { Display, formatTimeToAMPM } from '../utils';
 import { theme } from '../theme/theme';
 import Separator from './Separator';
 import { Entypo, AntDesign } from "@expo/vector-icons";
+import { CircleIcon, Radio, RadioIcon, RadioIndicator, RadioLabel, VStack, RadioGroup } from '@gluestack-ui/themed';
+
 
 interface SlotDetail {
     Id: string;
@@ -112,7 +113,7 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
                             width: Display.setWidth(80),
                             marginTop: Display.setHeight(1),
                             paddingLeft: theme.padding.large,
-                            marginBottom: Display.setHeight(1)
+                            marginBottom: Display.setHeight(2)
                         }}
                     >
                         <Text
@@ -164,98 +165,106 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
                 isSelected ? (
                     <>
                         <Text style={styles.mealTitle}>{day.Day}</Text>
-                        <NativeBaseProvider>
-                            <View key={day.Id} style={styles.Container}>
-                                {lunchTiming && showLunch && (
-                                    <View style={styles.TimingContainer}>
-                                        <View
-                                            style={{
-                                                flexDirection: 'column',
-                                                backgroundColor: theme.colors.background.bgGrayGreen,
-                                            }}
-                                        >
-                                            <Text style={styles.timingTitle}>Lunch</Text>
-                                            <Separator
-                                                width={'100%'}
-                                                height={Display.setHeight(0.1)}
-                                                color={theme.colors.accent.mediumGray}
-                                            />
-                                        </View>
-                                        <Radio.Group
-                                            name={`${day.Day}-lunchGroup`}
-                                            value={lunchSelected?.Id}
-                                            onChange={(value) => {
-                                                const selectedSlot = lunchTiming.ServingTime.find(slot => slot.Id === value);
-                                                if (selectedSlot) {
-                                                    onSlotSelect(day.Day, 'Lunch', selectedSlot.SlotStart, selectedSlot.Id);
-                                                }
-                                            }}
-                                        >
-                                            <VStack space={2} style={styles.Vstack}>
-                                                {lunchTiming.ServingTime.map((slot) => (
-                                                    <Radio
-                                                        key={slot.Id}
-                                                        value={slot.Id}
-                                                        my={2}
-                                                        colorScheme={"muted"}
-                                                        backgroundColor={theme.colors.accent.lightGray}
-                                                        style={styles.radio}
-                                                    >
-                                                        <Text style={styles.radioText}>
-                                                            {`${formatTimeToAMPM(slot.SlotStart)} - ${formatTimeToAMPM(slot.SlotEnd)}`}
-                                                        </Text>
-                                                    </Radio>
-                                                ))}
-                                            </VStack>
-                                        </Radio.Group>
+
+                        <View key={day.Id} style={styles.Container}>
+                            {lunchTiming && showLunch && (
+                                <View style={styles.TimingContainer}>
+                                    <View
+                                        style={{
+                                            flexDirection: 'column',
+                                            backgroundColor: theme.colors.background.bgGrayGreen,
+                                        }}
+                                    >
+                                        <Text style={styles.timingTitle}>Lunch</Text>
+                                        <Separator
+                                            width={'100%'}
+                                            height={Display.setHeight(0.1)}
+                                            color={theme.colors.accent.mediumGray}
+                                        />
                                     </View>
-                                )}
-                                {dinnerTiming && showDinner && (
-                                    <View style={styles.TimingContainer}>
-                                        <View
-                                            style={{
-                                                flexDirection: 'column',
-                                                backgroundColor: theme.colors.background.bgGrayGreen,
-                                            }}
+                                    <RadioGroup
+                                        value={lunchSelected?.Id || lunchTiming.ServingTime[0].Id}
+                                        onChange={(value) => {
+                                            const selectedSlot = lunchTiming.ServingTime.find(slot => slot.Id === value);
+                                            if (selectedSlot) {
+                                                onSlotSelect(day.Day, 'Lunch', selectedSlot.SlotStart, selectedSlot.Id);
+                                            }
+                                        }}
+                                    >
+                                        <VStack
+                                            space="lg"
+                                            style={styles.Vstack}
                                         >
-                                            <Text style={styles.timingTitle}>Dinner</Text>
-                                            <Separator
-                                                width={'100%'}
-                                                height={Display.setHeight(0.1)}
-                                                color={theme.colors.accent.mediumGray}
-                                            />
-                                        </View>
-                                        <Radio.Group
-                                            name={`${day.Day}-dinnerGroup`}
-                                            value={dinnerSelected?.Id}
-                                            onChange={(value) => {
-                                                const selectedSlot = dinnerTiming.ServingTime.find(slot => slot.Id === value);
-                                                if (selectedSlot) {
-                                                    onSlotSelect(day.Day, 'Dinner', selectedSlot.SlotStart, selectedSlot.Id);
-                                                }
-                                            }}
-                                        >
-                                            <VStack space={2} style={styles.Vstack}>
-                                                {dinnerTiming.ServingTime.map((slot) => (
-                                                    <Radio
-                                                        key={slot.Id}
-                                                        value={slot.Id}
-                                                        my={2}
-                                                        colorScheme={"muted"}
-                                                        backgroundColor={theme.colors.accent.lightGray}
-                                                        style={styles.radio}
-                                                    >
-                                                        <Text style={styles.radioText}>
-                                                            {`${formatTimeToAMPM(slot.SlotStart)} - ${formatTimeToAMPM(slot.SlotEnd)}`}
-                                                        </Text>
-                                                    </Radio>
-                                                ))}
-                                            </VStack>
-                                        </Radio.Group>
+                                            {lunchTiming.ServingTime.map((slot) => (
+                                                <Radio
+                                                    key={slot.Id}
+                                                    value={slot.Id}
+                                                >
+                                                    <RadioIndicator mr="$2">
+                                                        <RadioIcon
+                                                            as={() => <CircleIcon
+                                                                color={theme.colors.accent.gray} />}
+                                                        />
+                                                    </RadioIndicator>
+                                                    <RadioLabel>
+                                                        {`${formatTimeToAMPM(slot.SlotStart)} - ${formatTimeToAMPM(slot.SlotEnd)}`}
+                                                    </RadioLabel>
+                                                </Radio>
+                                            ))}
+                                        </VStack>
+                                    </RadioGroup>
+                                </View>
+                            )}
+                            {dinnerTiming && showDinner && (
+                                <View style={styles.TimingContainer}>
+                                    <View
+                                        style={{
+                                            flexDirection: 'column',
+                                            backgroundColor: theme.colors.background.bgGrayGreen,
+                                        }}
+                                    >
+                                        <Text style={styles.timingTitle}>Dinner</Text>
+                                        <Separator
+                                            width={'100%'}
+                                            height={Display.setHeight(0.1)}
+                                            color={theme.colors.accent.mediumGray}
+                                        />
                                     </View>
-                                )}
-                            </View>
-                        </NativeBaseProvider>
+                                    <RadioGroup
+                                        value={dinnerSelected?.Id || dinnerTiming.ServingTime[0].Id}
+                                        onChange={(value) => {
+                                            const selectedSlot = dinnerTiming.ServingTime.find(slot => slot.Id === value);
+                                            if (selectedSlot) {
+                                                onSlotSelect(day.Day, 'Dinner', selectedSlot.SlotStart, selectedSlot.Id);
+                                            }
+                                        }}
+                                    >
+                                        <VStack
+                                            space="lg"
+                                            style={styles.Vstack}
+                                        >
+                                            {dinnerTiming.ServingTime.map((slot) => (
+                                                <Radio
+                                                    key={slot.Id}
+                                                    value={slot.Id}
+                                                >
+                                                    <RadioIndicator
+                                                        mr="$2">
+                                                        <RadioIcon
+                                                            as={() => <CircleIcon
+                                                                color={theme.colors.accent.gray} />}
+                                                        />
+                                                    </RadioIndicator>
+                                                    <RadioLabel>
+                                                        {`${formatTimeToAMPM(slot.SlotStart)} - ${formatTimeToAMPM(slot.SlotEnd)}`}
+                                                    </RadioLabel>
+                                                </Radio>
+                                            ))}
+                                        </VStack>
+                                    </RadioGroup>
+                                </View>
+                            )}
+                        </View>
                     </>
                 ) : (
                     <><Text style={styles.mealTitle}>{day.Day}</Text>
@@ -347,6 +356,7 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
 const styles = StyleSheet.create({
     Container: {
         width: Display.setWidth(80),
+        marginBottom: Display.setHeight(2),
         paddingLeft: theme.padding.large,
     },
     TimingContainer: {
