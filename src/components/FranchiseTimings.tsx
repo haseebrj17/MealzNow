@@ -6,55 +6,8 @@ import { theme } from '../theme/theme';
 import Separator from './Separator';
 import { Entypo, AntDesign } from "@expo/vector-icons";
 import { CircleIcon, Radio, RadioIcon, RadioIndicator, RadioLabel, VStack, RadioGroup } from '@gluestack-ui/themed';
-
-
-interface SlotDetail {
-    Id: string;
-    Time: string;
-}
-
-interface MealSelection {
-    Lunch?: SlotDetail;
-    Dinner?: SlotDetail;
-}
-
-interface SelectedSlots {
-    [day: string]: MealSelection;
-}
-
-type ServingDay = {
-    Id: string;
-    Name: string;
-};
-
-interface ServingTimeSlot {
-    Id: string;
-    SlotStart: string;
-    SlotEnd: string;
-}
-
-interface Slot {
-    Id: string;
-    SlotStart: string;
-    SlotEnd: string;
-}
-
-interface ServingTiming {
-    Id: string;
-    Name: string;
-    ServingTime: ServingTimeSlot[];
-}
-
-interface FranchiseTiming {
-    Id: string;
-    Day: string;
-    OpeningTime: string;
-    ClosingTime: string;
-    Open: boolean;
-    ServingTimings: ServingTiming[];
-}
-
-type FranchiseTimings = FranchiseTiming[];
+import { FranchiseTiming, FranchiseTimings, ServingDay } from '../types/franchise';
+import { SelectedSlots } from '../types/slotsAndDates';
 
 interface Props {
     selectedServingDays: ServingDay[];
@@ -117,6 +70,7 @@ const DaySlots: React.FC<Props> = ({ selectedServingDays, timingString, timings,
                         }}
                     >
                         <Text
+                            key={`message-${day.Id}`}
                             style={{
                                 color: theme.colors.accent.disabledGray,
                                 fontWeight: '500',

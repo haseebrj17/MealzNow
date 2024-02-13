@@ -1,174 +1,11 @@
+import { DayWithDateAndSlots } from '../types/temp';
+import { Dish, MealPlan, MealsForTheDay, Perks, UserPreferences } from '../types/meal';
+import { CustomerPackage } from '../types/customer';
+import { ProductByDay } from '../types/cart';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/Store';
 
-interface Package {
-    Id: string;
-    Name: string;
-    PackageType: number;
-    IncludesDrinks: boolean;
-    IncludesSides: boolean;
-    IncludesDessert: boolean;
-    IncludesToppings: boolean;
-    IncludesDippings: boolean;
-    IncludesDelivery: boolean;
-    Price: number;
-    FranchiseId: string,
-}
-
-type Packages = Package[];
-
-interface ProductAllergy {
-    AllergyName: string;
-}
-
-interface ProductPrice {
-    Id: string;
-    Price: number;
-    Name: string;
-    Description: string;
-}
-
-interface ProductCategory {
-    CategoryId: string;
-    CategoryName: string;
-    CategoryType: string;
-}
-
-interface ProductExtraDipping {
-    Id: string;
-    Name: string;
-    Detail: string;
-    ProductExtraDippingAllergy: ProductExtraDippingAllergy[] | null;
-    ProductExtraDippingPrice: ProductExtraDippingPrice[] | null;
-}
-
-interface ProductExtraDippingAllergy {
-    AllergyName: string;
-}
-
-interface ProductExtraDippingPrice {
-    Id: string;
-    Price: number;
-    Name: string;
-    Description: string;
-}
-
-interface ProductExtraTopping {
-    Id: string;
-    Name: string;
-    Detail: string;
-    ProductExtraToppingAllergy: ProductExtraToppingAllergy[] | null;
-    ProductExtraToppingPrice: ProductExtraToppingPrice[] | null;
-}
-
-interface ProductExtraToppingAllergy {
-    AllergyName: string;
-}
-
-interface ProductExtraToppingPrice {
-    Id: string;
-    Price: number;
-    Name: string;
-    Description: string;
-}
-
-interface ProductItemOutline {
-    Id: string;
-    Name: string;
-}
-
-interface ProductChoices {
-    Name: string;
-    Detail: string;
-}
-
-interface Dish {
-    Id: string;
-    Name: string;
-    Detail: string;
-    EstimatedDeliveryTime: number,
-    Sequence: number;
-    SpiceLevel: number;
-    Type: string;
-    IngredientSummary: string;
-    IngredientDetail: string;
-    Image: string;
-    IsActive: boolean;
-    ShowExtraTopping: boolean;
-    ShowExtraDipping: boolean;
-    ProductAllergy: ProductAllergy[] | null;
-    ProductPrice: ProductPrice[];
-    ProductCategory: ProductCategory[];
-    CategoryId: string;
-    ProductExtraDipping: ProductExtraDipping[] | null;
-    ProductExtraTopping: ProductExtraTopping[] | null;
-    ProductItemOutline: ProductItemOutline[] | null;
-    ProductChoices: ProductChoices[] | null;
-}
-
-interface DayWithDate {
-    dayName: string;
-    date: string;
-}
-
-interface SlotDetail {
-    Id: string;
-    Time: string;
-}
-
-interface DayWithDateAndSlots extends DayWithDate {
-    dayId: string;
-    slots: MealSelection;
-}
-
-interface MealSelection {
-    Lunch?: SlotDetail;
-    Dinner?: SlotDetail;
-}
-
-interface UserPreferences {
-    generatedDates: DayWithDateAndSlots[] | null;
-    preferredCategories: Array<{ categoryId: string; categoryName: string }>;
-    excludedIngredients: string[];
-    mealType: string;
-    packageType: string;
-}
-
-interface PackagePerks {
-    IncludesDrinks: boolean;
-    IncludesSides: boolean;
-    IncludesDessert: boolean;
-    IncludesToppings?: boolean;
-    IncludesDippings?: boolean;
-}
-
-interface MealPlan {
-    dayId: string;
-    day: string;
-    date: string;
-    meals: MealsForTheDay;
-}
-
-interface MealsForTheDay {
-    [key: string]: MealDetails | undefined;
-    Lunch?: MealDetails;
-    Dinner?: MealDetails;
-}
-
-interface MealDetails {
-    timing: string;
-    timingId: string;
-    dish: Dish;
-    perks: Perks;
-}
-
-interface Perks {
-    IncludesDrinks: boolean;
-    IncludesSides: boolean;
-    IncludesDessert: boolean;
-    IncludesToppings?: boolean;
-    IncludesDippings?: boolean;
-}
-
-const packagePerks: { [key: string]: PackagePerks } = {
+const packagePerks: { [key: string]: Perks } = {
     Basic: { IncludesDrinks: false, IncludesSides: false, IncludesDessert: false },
     Standard: { IncludesDrinks: true, IncludesSides: false, IncludesDessert: true },
     Premium: { IncludesDrinks: true, IncludesSides: true, IncludesDessert: true, IncludesToppings: true, IncludesDippings: true },
@@ -195,7 +32,7 @@ function selectDishForMeal(filteredDishes: Dish[], preferredCategories: string[]
     }
 }
 
-function addPerksToMeal(meal: Dish[], perks: PackagePerks): any {
+function addPerksToMeal(meal: Dish[], perks: Perks): any {
     return {
         dishes: meal,
         perks: perks

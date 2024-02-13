@@ -31,33 +31,33 @@ export interface OrderedProductDrinks {
     price?: number
 }
 
-export const orderedProductChoicesSchema = yup.object().shape({
+export const orderedProductChoicesValidation = yup.object().shape({
     name: yup.string().required(),
     detail: yup.string().required(),
 });
 
-export const orderedProductExtraDippingSchema = yup.object().shape({
+export const orderedProductExtraDippingValidation = yup.object().shape({
     name: yup.string().required(),
     price: yup.number().required(),
 });
 
-export const orderedProductExtraToppingSchema = yup.object().shape({
+export const orderedProductExtraToppingValidation = yup.object().shape({
     name: yup.string().required(),
     price: yup.number().required(),
 });
 
-export const orderedProductSidesSchema = yup.object().shape({
+export const orderedProductSidesValidation = yup.object().shape({
     name: yup.string().required(),
     price: yup.number().required(),
     orderProductId: yup.string().required(), // Assuming this is a string ID
 });
 
-export const orderedProductDessertSchema = yup.object().shape({
+export const orderedProductDessertValidation = yup.object().shape({
     name: yup.string().required(),
     price: yup.number().required(),
 });
 
-export const orderedProductDrinksSchema = yup.object().shape({
+export const orderedProductDrinksValidation = yup.object().shape({
     name: yup.string().required(),
     price: yup.number().required(),
 });

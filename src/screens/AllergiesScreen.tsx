@@ -13,7 +13,7 @@ import FlashMessage from '../components/flashMessage';
 import { RouteProp } from '@react-navigation/native';
 import { RootState } from '../Store';
 import { MealTypeShimmer } from '../components/skeleton';
-import { insertCustomerProductInclusion } from '../db/methods/custmerNestedOperations';
+import { updateCustomerProductInclusion } from '../features/customer/customerSlice';
 
 type RootStackParamList = {
     Allergies: { outlineId: string };
@@ -31,6 +31,8 @@ const AllergiesScreen: React.FC<AllergiesScreenProps> = ({ navigation, route }) 
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
     const [outlineId, setOutlineId] = useState<string>(route?.params?.outlineId);
     const [data, setData] = useState<any[]>([]);
+
+    const dispatch = useDispatch();
 
     const { productOutline, loadingFranchise } = useSelector(
         (state: RootState) => state.franchise
@@ -52,28 +54,38 @@ const AllergiesScreen: React.FC<AllergiesScreenProps> = ({ navigation, route }) 
         }
     };
 
+    const { customer } = useSelector(
+        (state: RootState) => state.customer
+    );
+
+    useEffect(() => {
+        console.log(customer)
+    }, [customer]);
+
     const handleNext = async () => {
+        let inclusionsToAdd = [];
+
         for (const selectedId of selectedTypes) {
             const matchedInclusion = data.find(inclusion => inclusion.Id === selectedId);
 
             if (matchedInclusion) {
                 const inclusionData = {
+                    inclusionName: matchedInclusion.Name,
+                    inclusionDetail: matchedInclusion.Detail,
                     inclusionId: matchedInclusion.Id,
-                    name: matchedInclusion.Name,
-                    icon: matchedInclusion.Icon,
-                    outlineId: outlineId
                 };
 
-                try {
-                    const response = await insertCustomerProductInclusion(inclusionData);
-                    console.log(`Inserted: ${response}`);
-                } catch (error) {
-                    console.error(`Error inserting inclusion: ${matchedInclusion.Id}`, error);
-                }
+                inclusionsToAdd.push(inclusionData);
             }
         }
+
+        if (inclusionsToAdd.length > 0) {
+            dispatch(updateCustomerProductInclusion(inclusionsToAdd));
+            console.log("Inclusions added to Redux state");
+        }
+
         navigation.navigate('PreferredCuisine');
-    }
+    };
 
     return (
         <View

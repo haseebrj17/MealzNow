@@ -12,7 +12,9 @@ import { setFlashMessage } from '../features/flashMessages/flashMessageSlice';
 import FlashMessage from '../components/flashMessage';
 import { AppDispatch, RootState } from '../Store';
 import { fetchDashboardData } from '../features/restaurants/dashboardDataSlice';
-import { insertPreferredCategory, insertPreferredSubCategory } from '../db/methods/custmerNestedOperations';
+import { updatePreferredSubCategories } from '../features/customer/customerSlice';
+import { AspectRatioMap } from '../types/common';
+import { PreferredSubCategories } from '../types/customer';
 
 type RootStackParamList = {
     PreferredCategories: undefined;
@@ -23,10 +25,6 @@ type PreferredCategoriesScreenNavigationProp = StackNavigationProp<RootStackPara
 
 interface PreferredCategoriesScreenProps {
     navigation: PreferredCategoriesScreenNavigationProp;
-}
-
-interface AspectRatioMap {
-    [key: string]: number;
 }
 
 const PreferredCategoriesScreen: React.FC<PreferredCategoriesScreenProps> = ({ navigation }) => {
@@ -53,6 +51,15 @@ const PreferredCategoriesScreen: React.FC<PreferredCategoriesScreenProps> = ({ n
         (state: RootState) => state.dashboard
     );
 
+
+    const { customer } = useSelector(
+        (state: RootState) => state.customer
+    );
+
+    useEffect(() => {
+        console.log("outline data", customer)
+    }, [customer]);
+
     useEffect(() => {
         if (franchiseDetails?.Id) {
             dispatch(fetchDashboardData({ FranchiseId: franchiseDetails.Id }));
@@ -65,38 +72,39 @@ const PreferredCategoriesScreen: React.FC<PreferredCategoriesScreenProps> = ({ n
     }, [categories]);
 
     const handleNext = async () => {
+        let subCategoriesData: PreferredSubCategories[] = [];
+
         for (const selectedId of selectedTypes) {
-            const matchedCategories = categoriesData.find(category => category.Id === selectedId);
+            const matchedCategory = categories.find(category => category.Id === selectedId);
 
-            if (matchedCategories) {
-                const categoryData = {
-                    subCategoryId: matchedCategories.Id,
-                    subCategoryName: matchedCategories.Name,
+            if (matchedCategory) {
+                const subCategoryData: PreferredSubCategories = {
+                    subCategoryName: matchedCategory.Name,
+                    subCategoryId: matchedCategory.Id
                 };
-
-                try {
-                    const response = await insertPreferredSubCategory(categoryData);
-                    console.log(`Inserted: ${response}`);
-                } catch (error) {
-                    console.error(`Error inserting inclusion: ${matchedCategories.Id}`, error);
-                }
+                subCategoriesData.push(subCategoryData);
             }
         }
+
+        if (subCategoriesData.length > 0) {
+            dispatch(updatePreferredSubCategories(subCategoriesData));
+            console.log("Categories added to Redux state");
+        }
         navigation.navigate('MealPerDay');
-    }
+    };
 
     const updateAspectRatios = async (items: any[]) => {
         const ratios: AspectRatioMap = {};
         for (const item of items) {
-            if (!item.Logo) {
+            if (!item.Thumbnail) {
                 console.error(`Icon URI is null for item with Id ${item.Id}`);
                 ratios[item.Id] = 1; // default ratio for items without a valid URI
                 continue;
             }
 
             try {
-                console.log(`Getting aspect ratio for ${item.Logo}`);
-                const ratio = await getImageAspectRatio(item.Logo);
+                console.log(`Getting aspect ratio for ${item.Thumbnail}`);
+                const ratio = await getImageAspectRatio(item.Thumbnail);
                 ratios[item.Id] = ratio;
             } catch (error) {
                 console.error(error);

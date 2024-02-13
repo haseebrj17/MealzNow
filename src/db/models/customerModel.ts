@@ -15,7 +15,6 @@ export const CustomerSchema = {
         customerPackage: 'CustomerPackage',
         customerPromo: 'CustomerPromo?',
         customerPayment: 'CustomerPayment',
-        customerPassword: 'CustomerPassword',
         customerDevice: 'CustomerDevice[]'
     },
     primaryKey: '_id',
@@ -33,7 +32,7 @@ export const PreferredCategoriesSchema = {
     name: 'PreferredCategories',
     properties: {
         categoryName: 'string?',
-        categoryID: 'string?'
+        categoryId: 'string?'
     }
 };
 
@@ -41,7 +40,7 @@ export const PreferredSubCategoriesSchema = {
     name: 'PreferredSubCategories',
     properties: {
         subCategoryName: 'string?',
-        subCategoryID: 'string?'
+        subCategoryId: 'string?'
     }
 };
 
@@ -61,7 +60,7 @@ export const CustomerProductInclusionSchema = {
     properties: {
         inclusionName: 'string?',
         inclusionDetail: 'string?',
-        inclusionID: 'string?'
+        inclusionId: 'string?'
     }
 };
 
@@ -89,14 +88,6 @@ export const CustomerPromoSchema = {
         type: 'string?',
         name: 'string?',
         percent: 'string?'
-    }
-};
-
-export const CustomerPasswordSchema = {
-    name: 'CustomerPassword',
-    properties: {
-        hash: 'string?',
-        password: 'string?'
     }
 };
 

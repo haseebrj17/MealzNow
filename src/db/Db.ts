@@ -21,11 +21,10 @@ import {
     CustomerPackageSchema,
     CustomerPaymentSchema,
     CustomerPromoSchema,
-    CustomerPasswordSchema,
     CustomerDeviceSchema
 } from "./models";
 
-const realmConfig = {
+export const realmConfig = {
     schema: [
         CustomerSchema,
         CartSchema,
@@ -48,10 +47,9 @@ const realmConfig = {
         CustomerPackageSchema,
         CustomerPaymentSchema,
         CustomerPromoSchema,
-        CustomerPasswordSchema,
         CustomerDeviceSchema
     ],
-    schemaVersion: 0,
+    schemaVersion: 2,
 };
 
 async function initializeRealm() {

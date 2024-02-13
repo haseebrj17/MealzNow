@@ -12,7 +12,9 @@ import { setFlashMessage } from '../features/flashMessages/flashMessageSlice';
 import FlashMessage from '../components/flashMessage';
 import { AppDispatch, RootState } from '../Store';
 import { fetchDashboardData } from '../features/restaurants/dashboardDataSlice';
-import { insertPreferredCategory } from '../db/methods/custmerNestedOperations';
+import { updatePreferenceCategories } from '../features/customer/customerSlice';
+import { AspectRatioMap } from '../types/common';
+import { PreferredCategories } from '../types/customer';
 
 type RootStackParamList = {
     PreferredCuisine: undefined;
@@ -23,10 +25,6 @@ type PreferredCuisineScreenNavigationProp = StackNavigationProp<RootStackParamLi
 
 interface PreferredCuisineScreenProps {
     navigation: PreferredCuisineScreenNavigationProp;
-}
-
-interface AspectRatioMap {
-    [key: string]: number;
 }
 
 const PreferredCuisineScreen: React.FC<PreferredCuisineScreenProps> = ({ navigation }) => {
@@ -53,6 +51,14 @@ const PreferredCuisineScreen: React.FC<PreferredCuisineScreenProps> = ({ navigat
         (state: RootState) => state.dashboard
     );
 
+    const { customer } = useSelector(
+        (state: RootState) => state.customer
+    );
+
+    useEffect(() => {
+        console.log("outline data", customer)
+    }, [customer]);
+
     useEffect(() => {
         if (franchiseDetails?.Id) {
             dispatch(fetchDashboardData({ FranchiseId: franchiseDetails.Id }));
@@ -60,30 +66,32 @@ const PreferredCuisineScreen: React.FC<PreferredCuisineScreenProps> = ({ navigat
     }, [dispatch, franchiseDetails?.Id]);
 
     useEffect(() => {
-        console.log('categories', brands);
+        // console.log('categories', brands);
         setCategoriesData(brands)
     }, [brands]);
 
     const handleNext = async () => {
-        for (const selectedId of selectedTypes) {
-            const matchedCategories = categoriesData.find(category => category.Id === selectedId);
+        let categoryData: PreferredCategories[] = [];
 
-            if (matchedCategories) {
-                const categoryData = {
-                    categoryId: matchedCategories.Id,
-                    categoryName: matchedCategories.Name,
+        for (const selectedId of selectedTypes) {
+            const matchedBrand = brands.find(category => category.Id === selectedId);
+
+            if (matchedBrand) {
+                const preferredCategoriesData: PreferredCategories = {
+                    categoryName: matchedBrand.Name,
+                    categoryId: matchedBrand.Id
                 };
 
-                try {
-                    const response = await insertPreferredCategory(categoryData);
-                    console.log(`Inserted: ${response}`);
-                } catch (error) {
-                    console.error(`Error inserting inclusion: ${matchedCategories.Id}`, error);
-                }
+                categoryData.push(preferredCategoriesData);
             }
         }
+
+        if (categoryData.length > 0) {
+            dispatch(updatePreferenceCategories(categoryData));
+            console.log("Categories added to Redux state");
+        }
         navigation.navigate('PreferredCategories');
-    }
+    };
 
     const updateAspectRatios = async (items: any[]) => {
         const ratios: AspectRatioMap = {};

@@ -12,8 +12,8 @@ import { setFlashMessage } from '../features/flashMessages/flashMessageSlice';
 import FlashMessage from '../components/flashMessage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppDispatch, RootState } from '../Store';
-import { insertCustomerPromo, insertOrUpdateCustomerPackage } from '../db/methods/custmerNestedOperations';
-import { insertCustomerOrderPromo, insertOrUpdateCustomerOrderedPackage } from '../db/methods/cartNestedOperations';
+import { updateCustomerPackage, updateCustomerPromo } from '../features/customer/customerSlice';
+import { updateCustomerOrderPromo, updateCustomerOrderedPackage } from '../features/cart/cartSlice';
 
 type RootStackParamList = {
     MealPerDay: undefined;
@@ -30,7 +30,7 @@ const MealPerDayScreen: React.FC<MealPerDayScreenProps> = ({ navigation }) => {
 
     const [selectedType, setSelectedType] = useState<string | null>(null);
     const [disabled, setDisabled] = useState(true)
-    const [mealzPeyDay, setMealzPerDay] = useState<any[]>([]);
+    const [mealzPerDay, setMealzPerDay] = useState<any[]>([]);
 
     const handleSelectedType = (Id: string) => {
         setSelectedType(Id);
@@ -43,59 +43,57 @@ const MealPerDayScreen: React.FC<MealPerDayScreenProps> = ({ navigation }) => {
         (state: RootState) => state.franchise
     );
 
+    const { customer } = useSelector(
+        (state: RootState) => state.customer
+    );
+
+    useEffect(() => {
+        console.log(customer)
+    }, [customer]);
+
     const insertData = async () => {
-        const mealz = mealzPeyDay.find(item => item?.Id === selectedType);
+        const mealz = mealzPerDay.find(item => item?.Id === selectedType);
         if (!mealz) {
             console.error("MealzPerDay not found");
             return;
         }
 
-        await handlePromoInsertion(mealz);
-        await handlePackageInsertion(mealz);
+        await handlePromoInsertion(mealz, dispatch);
+        await handlePackageInsertion(mealz, dispatch);
     };
 
-    const handlePromoInsertion = async (mealz: any) => {
-        const promoId: string = new Date().getTime().toString()
+    const handlePromoInsertion = async (mealz: any, dispatch: any) => {
         if (mealz.Discount > 0) {
             const promo = {
-                promoId: promoId,
+                promoId: new Date().getTime().toString(),
                 type: mealz.Title,
                 name: mealz.Title,
-                percent: mealz.Discount
+                percent: mealz.Discount.toString(),
             };
 
-            try {
-                const rescop = await insertCustomerOrderPromo(promo);
-                const rescp = await insertCustomerPromo(promo);
-                console.log(`Order Promo: ${rescop}, Promo: ${rescp}`);
-                if (!rescp || !rescop) {
-                    console.error('Error inserting promo');
-                }
-            } catch (error) {
-                console.error('Error handling promo insertion:', error);
-            }
+            dispatch(updateCustomerPromo(promo));
+
+            dispatch(updateCustomerOrderPromo(promo));
+            console.log(`Promo added to Redux state`);
         }
     };
 
-    const handlePackageInsertion = async (mealz: any) => {
+    const handlePackageInsertion = async (mealz: any, dispatch: any) => {
         const packageData = {
             packageId: mealz.Id,
-            timings: mealz.Timings
+            packageName: '',
+            timings: mealz.Timings,
+            totalNumberOfMeals: 0,
+            numberOfDays: 0,
+            numberOfWeeks: 0,
+            mealzPerDay: mealz.Title,
         };
 
-        try {
-            console.log("Package data before function call:", packageData);
-            const rescp = await insertOrUpdateCustomerPackage(packageData);
-            const rescop = await insertOrUpdateCustomerOrderedPackage(packageData);
+        dispatch(updateCustomerPackage(packageData));
 
-            if (rescp && rescop) {
-                navigation.navigate('DeliveriesPerWeek', { packageId: selectedType });
-            } else {
-                console.error('Error inserting packages');
-            }
-        } catch (error) {
-            console.error('Error handling package insertion:', error);
-        }
+        dispatch(updateCustomerOrderedPackage(packageData));
+
+        navigation.navigate('DeliveriesPerWeek', { packageId: mealz.Id });
     };
 
     useEffect(() => {
@@ -121,7 +119,7 @@ const MealPerDayScreen: React.FC<MealPerDayScreenProps> = ({ navigation }) => {
                 buttonTextColor={theme.colors.custom[4].snuff}
                 buttonDisabled={disabled}
             >
-                {mealzPeyDay?.map((item) => {
+                {mealzPerDay?.map((item) => {
                     return (
                         <TouchableOpacity
                             key={item.Id}

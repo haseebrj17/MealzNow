@@ -13,7 +13,6 @@ import FlashMessage from '../components/flashMessage';
 import { MaterialCommunityIcons, AntDesign, Entypo } from '@expo/vector-icons';
 import { RouteProp } from '@react-navigation/native';
 import { RootState } from '../Store';
-import { getDataFromTable, getDataFromTableWithLimit } from '../db/methods/common';
 import LottieView from 'lottie-react-native';
 import { createMealPlan } from '../components/DishAlgorithm';
 import { getImageAspectRatioWithCallBack } from '../utils/ImageAspect';
@@ -21,193 +20,20 @@ import Modal from "react-native-modal";
 import { ScrollView } from 'react-native-gesture-handler';
 import { BlurView } from 'expo-blur';
 import { number } from 'prop-types';
-import { createNewDayAndGetId, insertProductByTiming } from '../db/methods/cartNestedOperations';
-import { insertIntoCart } from '../db/methods/cartOperations';
-
-interface Package {
-    Id: string;
-    Name: string;
-    PackageType: number;
-    IncludesDrinks: boolean;
-    IncludesSides: boolean;
-    IncludesDessert: boolean;
-    IncludesToppings: boolean;
-    IncludesDippings: boolean;
-    IncludesDelivery: boolean;
-    Price: number;
-    FranchiseId: string,
-}
-
-interface CustomerPackage {
-    packageId: string;
-    packageName: string;
-    totalNumberOfMeals: number;
-    numberOfDays: number;
-    timings: number;
-    numberOfWeeks: number;
-}
-
-type Packages = Package[];
-
-interface ProductAllergy {
-    AllergyName: string;
-}
-
-interface ProductPrice {
-    Id: string;
-    Price: number;
-    Name: string;
-    Description: string;
-}
-
-interface ProductCategory {
-    CategoryId: string;
-    CategoryName: string;
-    CategoryType: string;
-}
-
-interface ProductExtraDipping {
-    Id: string;
-    Name: string;
-    Detail: string;
-    ProductExtraDippingAllergy: ProductExtraDippingAllergy[] | null;
-    ProductExtraDippingPrice: ProductExtraDippingPrice[] | null;
-}
-
-interface ProductExtraDippingAllergy {
-    AllergyName: string;
-}
-
-interface ProductExtraDippingPrice {
-    Id: string;
-    Price: number;
-    Name: string;
-    Description: string;
-}
-
-interface ProductExtraTopping {
-    Id: string;
-    Name: string;
-    Detail: string;
-    ProductExtraToppingAllergy: ProductExtraToppingAllergy[] | null;
-    ProductExtraToppingPrice: ProductExtraToppingPrice[] | null;
-}
-
-interface ProductExtraToppingAllergy {
-    AllergyName: string;
-}
-
-interface ProductExtraToppingPrice {
-    Id: string;
-    Price: number;
-    Name: string;
-    Description: string;
-}
-
-interface ProductItemOutline {
-    Id: string;
-    Name: string;
-}
-
-interface ProductChoices {
-    Name: string;
-    Detail: string;
-}
-
-interface Dish {
-    Id: string;
-    Name: string;
-    Detail: string;
-    EstimatedDeliveryTime: number,
-    Sequence: number;
-    SpiceLevel: number;
-    Type: string;
-    IngredientSummary: string;
-    IngredientDetail: string;
-    Image: string;
-    IsActive: boolean;
-    ShowExtraTopping: boolean;
-    ShowExtraDipping: boolean;
-    ProductAllergy: ProductAllergy[] | null;
-    ProductPrice: ProductPrice[];
-    ProductCategory: ProductCategory[];
-    CategoryId: string;
-    ProductExtraDipping: ProductExtraDipping[] | null;
-    ProductExtraTopping: ProductExtraTopping[] | null;
-    ProductItemOutline: ProductItemOutline[] | null;
-    ProductChoices: ProductChoices[] | null;
-}
-
-interface DayWithDate {
-    dayName: string;
-    date: string;
-}
-
-interface SlotDetail {
-    Id: string;
-    Time: string;
-}
-
-interface DayWithDateAndSlots extends DayWithDate {
-    dayId: string;
-    slots: MealSelection;
-}
-
-interface MealSelection {
-    Lunch?: SlotDetail;
-    Dinner?: SlotDetail;
-}
-
-interface MealPlan {
-    dayId: string;
-    day: string;
-    date: string;
-    meals: MealsForTheDay;
-}
-
-interface MealsForTheDay {
-    [key: string]: MealDetails | undefined;
-    Lunch?: MealDetails;
-    Dinner?: MealDetails;
-}
-
-interface MealDetails {
-    timing: string;
-    timingId: string;
-    dish: Dish;
-    perks: Perks;
-}
-
-interface Perks {
-    IncludesDrinks: boolean;
-    IncludesSides: boolean;
-    IncludesDessert: boolean;
-    IncludesToppings?: boolean;
-    IncludesDippings?: boolean;
-}
-
-interface UserPreferences {
-    generatedDates: DayWithDateAndSlots[];
-    preferredCategories: Array<{ categoryId: string; categoryName: string }>;
-    excludedIngredients: string[];
-    mealType: string;
-    packageType: string;
-}
+import { addProductsByDay, updateCustomerInfo, updateCustomerOrderedPackage, updateFranchiseInfo, updateTotals } from '../features/cart/cartSlice';
+import { setGeneratedDates, setPackageType } from '../features/temp/TempSlice';
+import { DayWithDateAndSlots } from '../types/temp';
+import { Dish, MealPlan, UserPreferences } from '../types/meal';
+import { CustomerPackage } from '../types/customer';
+import { ProductByDay } from '../types/cart';
+import { updateCustomerPackage } from '../features/customer/customerSlice';
 
 type RootStackParamList = {
     Meals: {
         packageId: string | null,
         generatedDates: DayWithDateAndSlots[] | null
     };
-    Cart: {
-        data: MealPlan[],
-        packages: Package,
-        totalAmount: number,
-        totalNumberOfMeals: number,
-        generatedDates: DayWithDateAndSlots[] | null,
-        packageId: string | null
-        packageType: Package | null
-    };
+    Cart: undefined;
 };
 
 type MealsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Meals'>;
@@ -491,6 +317,16 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
         (state: RootState) => state.dashboard
     );
 
+    const { customer } = useSelector(
+        (state: RootState) => state.customer
+    );
+    
+    const { userData } = useSelector(
+        (state: RootState) => state.general
+    );
+
+    const dispatch = useDispatch();
+
     const [selectedType, setSelectedType] = useState<any | null>(null);
     const [disabled, setDisabled] = useState(true)
     const [timing, setTiming] = useState<string | null>(null);
@@ -498,7 +334,7 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
     const [packageData, setPackageData] = useState<CustomerPackage>();
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [totalNumberOfMeals, setTotalNumberOfMeals] = useState<number>(0);
-    const [mealzPeyDay, setMealzPeyDay] = useState<MealPlan[]>([]);
+    const [mealzPerDay, setMealzPerDay] = useState<MealPlan[]>([]);
     const [mealPlanCache, setMealPlanCache] = useState<{ [packageType: string]: MealPlan[] }>({});
     const [userPreferences, setUserPreferences] = useState<UserPreferences>({
         generatedDates: [],
@@ -523,12 +359,11 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
     const loadMealPlans = () => {
         const cachedMealPlans = mealPlanCache[selectedType?.Name];
         if (cachedMealPlans) {
-            // console.log('Loading meal plans from cache for package type:', selectedType?.Name);
-            setMealzPeyDay(cachedMealPlans);
+            setMealzPerDay(cachedMealPlans);
         } else {
             try {
                 const mealPlanData = createMealPlan(userPreferences, dishes);
-                setMealzPeyDay(mealPlanData);
+                setMealzPerDay(mealPlanData);
                 setMealPlanCache(prevCache => ({
                     ...prevCache,
                     [selectedType?.Name]: mealPlanData
@@ -540,11 +375,9 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
     };
 
     const refreshMealPlans = () => {
-        // console.log('Forcibly refreshing meal plans for package type:', selectedType?.Name);
-
         try {
             const mealPlanData = createMealPlan(userPreferences, dishes);
-            setMealzPeyDay(mealPlanData);
+            setMealzPerDay(mealPlanData);
             setMealPlanCache(prevCache => ({
                 ...prevCache,
                 [selectedType?.Name]: mealPlanData
@@ -559,80 +392,23 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
     }, [route?.params?.packageId, route?.params?.generatedDates, franchiseSetting, selectedType?.Name, products]);
 
     const fetchData = async () => {
-        // Fetch package data
-        const packageData = await getDataFromTable(
-            "CustomerPackage",
-            ["timings", "totalNumberOfMeals", "numberOfDays", "numberOfWeeks"],
-            "packageId = ?",
-            [route?.params?.packageId]
-        );
-        if (packageData && packageData.length > 0) {
-            const packageDataItem = packageData[0];
-            setPackageData(packageDataItem);
-
-            const timingString = franchiseSetting?.MealsPerDay.find(meal => meal.Timings === packageDataItem.timings)?.Title ?? null;
+        if (customer) {
+            setPackageData(customer.customerPackage)
+            const timingString = franchiseSetting?.MealsPerDay.find(meal => meal.Timings === customer.customerPackage.timings)?.Title ?? null;
             setTiming(timingString);
+            setPromoId(customer?.customerPromo?.promoId ?? null);
+
+            const excludedIngredientsIds = customer.customerProductOutline.customerProductInclusion?.map(inclusion => inclusion.inclusionId);
+
+            console.log('generatedDate', route?.params?.generatedDates);
+            setUserPreferences({
+                generatedDates: route?.params?.generatedDates ?? [],
+                preferredCategories: customer.preference?.preferredCategories ?? [],
+                excludedIngredients: excludedIngredientsIds ?? [],
+                mealType: customer.customerProductOutline.title ?? 'Omnivore',
+                packageType: selectedType?.Name ?? 'Basic'
+            });
         }
-
-        // Fetch product outline ID and meal type
-        const productOutlineData = await getDataFromTableWithLimit(
-            "CustomerProductOutline",
-            ["outlineId", "title"],
-            '',
-            [],
-            1
-        );
-        const outlineId = productOutlineData[0]?.outlineId;
-        const mealType = productOutlineData[0]?.title;
-
-        // Fetch excluded ingredients
-        const excludedIngredientsData = await getDataFromTable(
-            "CustomerProductInclusion",
-            ["name"],
-            "productInclusionId = ?",
-            [outlineId]
-        );
-
-        // Fetch preference ID
-        const preferenceData = await getDataFromTableWithLimit(
-            "Preference",
-            ["preferenceId"],
-            '',
-            [],
-            1
-        );
-        const preferenceId = preferenceData[0]?.preferenceId.toString();
-
-        // Fetch preferred categories
-        const preferredCategoriesData = await getDataFromTable(
-            "PreferredCategories",
-            ["categoryId"],
-            "preferenceId = ?",
-            [preferenceId]
-        );
-
-        const promoData = await getDataFromTableWithLimit(
-            "CustomerOrderPromo",
-            ["promoId"],
-            '',
-            [],
-            1
-        );
-        const promoId = promoData[0]?.promoId;
-
-        setPromoId(promoId);
-
-        console.log('route?.params?.generatedDates', route?.params?.generatedDates);
-
-        // Update user preferences state
-        setUserPreferences({
-            generatedDates: route?.params?.generatedDates ?? [],
-            preferredCategories: preferredCategoriesData ?? [],
-            excludedIngredients: excludedIngredientsData ?? [],
-            mealType: mealType ?? 'Omnivore',
-            packageType: selectedType?.Name ?? 'Basic'
-        });
-        // console.log('userPreferences', userPreferences.generatedDates[0].slots[0]);
 
         if (products.length > 0) {
             loadMealPlans();
@@ -645,7 +421,7 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
         let totalMealz = 0;
 
         if (packageData && packages) {
-            mealzPeyDay.forEach((item) => {
+            mealzPerDay.forEach((item) => {
                 if (item.meals.Lunch?.dish) {
                     totalMealz += 1;
                 }
@@ -658,12 +434,11 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
             if (packagePrice != 0) {
                 const totalAmount = totalMealz * packagePrice;
                 setTotalAmount(totalAmount);
-                // console.log('totalAmount', totalAmount);
             }
         }
         setTotalNumberOfMeals(totalMealz);
-        console.log(mealzPeyDay);
-    }, [mealzPeyDay, packageData, packages, selectedType]);
+        console.log(mealzPerDay[0]?.meals);
+    }, [mealzPerDay, packageData, packages, selectedType]);
 
     const [popoverLunchVisible, setPopoverLunchVisible] = useState<boolean>(false);
     const [popoverDinnerVisible, setPopoverDinnerVisible] = useState<boolean>(false);
@@ -691,6 +466,70 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
         setTimeout(() => {
             setPopoverDinnerVisible(true);
         }, 1000);
+    };
+
+    const transformMealPlanToProductByDay = (mealPlans: MealPlan[]): ProductByDay[] => {
+        return mealPlans.map(mealPlan => ({
+            day: mealPlan.day,
+            dayId: mealPlan.dayId,
+            deliveryDate: mealPlan.date,
+            productByTiming: Object.entries(mealPlan.meals).flatMap(([mealType, details]) =>
+                details ? [{
+                    compositeId: `${details.dish.Id}_${details.timingId}_${franchiseSetting?.MealsPerDay.find(m => m.Title == mealType)?.Id}_${mealPlan.date.toString() + details.timing}`,
+                    id: details.dish.Id,
+                    timeOfDay: mealType,
+                    timeOfDayId: franchiseSetting?.MealsPerDay.find(m => m.Title == mealType)?.Id,
+                    deliveryTimings: `${mealPlan.date}T${details.timing}`,
+                    deliveryTimingsId: details.timingId,
+                    name: details.dish.Name,
+                    detail: details.dish.Detail,
+                    estimatedDeliveryTime: details.dish.EstimatedDeliveryTime.toString(),
+                    spiceLevel: details.dish.SpiceLevel.toString(),
+                    type: details.dish.Type,
+                    ingredientSummary: details.dish.IngredientSummary,
+                    image: details.dish.Image,
+                    price: details.dish.ProductPrice.reduce((acc, curr) => acc + curr.Price, 0),
+                    categoryId: details.dish.CategoryId,
+                    orderedProductExtraDippings: details.dish.ProductExtraDipping?.map(dipping => ({
+                        name: dipping.Name,
+                        price: dipping.ProductExtraDippingPrice?.[0]?.Price ?? 0,
+                    })) || [],
+                    orderedProductExtraToppings: details.dish.ProductExtraTopping?.map(topping => ({
+                        name: topping.Name,
+                        price: topping.ProductExtraToppingPrice?.[0]?.Price ?? 0,
+                    })) || [],
+                    orderedProductChoices: details.dish.ProductChoices?.map(choice => ({
+                        name: choice.Name,
+                        detail: choice.Detail,
+                    })) || [],
+                    orderedProductSides: {},
+                    orderedProductDessert: {},
+                    orderedProductDrinks: {}
+                }] : []
+            ),
+        }));
+    };
+
+    const handleNext = () => {
+        const mealPlansTransformed = transformMealPlanToProductByDay(mealzPerDay);
+        dispatch(addProductsByDay(mealPlansTransformed));
+        dispatch(updateTotals({ totalItems: totalNumberOfMeals, totalBill: totalAmount }));
+        dispatch(setGeneratedDates(userPreferences?.generatedDates));
+        dispatch(setPackageType(selectedType));
+        const packageData = {
+            packageId: selectedType?.Id ?? '',
+            packageName: selectedType?.Name ?? '',
+            timings: customer?.customerPackage?.timings ?? 0,
+            totalNumberOfMeals: totalNumberOfMeals ?? 0,
+            numberOfDays: customer?.customerPackage?.numberOfDays ?? 0,
+            numberOfWeeks: customer?.customerPackage?.numberOfWeeks ?? 0,
+            mealzPerDay: customer?.customerPackage?.mealzPerDay ?? '',
+        };
+        dispatch(updateCustomerPackage(packageData))
+        dispatch(updateCustomerOrderedPackage(packageData))
+        dispatch(updateCustomerInfo({ customerId: userData?.Id }))
+        dispatch(updateFranchiseInfo({ franchiseId: franchiseDetails?.Id }))
+        navigation.navigate('Cart');
     };
 
     const renderItem = ({ item, index }: { item: MealPlan, index: number }) => {
@@ -1002,15 +841,7 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
                 height={Display.setHeight(1)}
                 buttonWidth={Display.setWidth(90)}
                 buttonHeight={Display.setHeight(5)}
-                onPress={() => navigation.navigate('Cart', {
-                    data: mealzPeyDay,
-                    packages: selectedType,
-                    totalAmount: totalAmount,
-                    totalNumberOfMeals: totalNumberOfMeals,
-                    generatedDates: route?.params?.generatedDates,
-                    packageId: route?.params?.packageId,
-                    packageType: selectedType
-                })}
+                onPress={() => handleNext()}
                 buttonTitle="NEXT"
                 buttonColor={theme.colors.primary.darker}
                 buttonTextColor={theme.colors.custom[4].snuff}
@@ -1117,7 +948,7 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
                                     color: theme.colors.primary.dark,
                                 }}
                             >
-                                {packageData.numberOfDays * packageData.numberOfWeeks} days over {packageData?.numberOfWeeks} weeks
+                                {packageData.numberOfDays} days over {packageData?.numberOfWeeks} weeks
                             </Text>
                         }
                     </View>
@@ -1180,7 +1011,7 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
                     </View>
                 }
                 <FlatList
-                    data={mealzPeyDay}
+                    data={mealzPerDay}
                     keyExtractor={(item, index) => item.date + index.toString()}
                     showsVerticalScrollIndicator={false}
                     scrollEnabled={true}

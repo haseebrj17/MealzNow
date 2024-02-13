@@ -7,7 +7,7 @@ export interface CustomerOrderedPackage {
     numberOfDays?: number
 }
 
-export const customerOrderedPackageSchema = yup.object().shape({
+export const customerOrderedPackageValidation = yup.object().shape({
     packageId: yup.string().required(),
     packageName: yup.string().required(),
     totalNumberOfMeals: yup.number().required(),

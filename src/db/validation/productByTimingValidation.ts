@@ -6,13 +6,13 @@ import {
     OrderedProductExtraDipping,
     OrderedProductExtraTopping,
     OrderedProductSides,
-    orderedProductChoicesSchema,
-    orderedProductDessertSchema,
-    orderedProductDrinksSchema,
-    orderedProductExtraDippingSchema,
-    orderedProductExtraToppingSchema,
-    orderedProductSidesSchema
-} from './productByTimingNestedSchema';
+    orderedProductChoicesValidation,
+    orderedProductDessertValidation,
+    orderedProductDrinksValidation,
+    orderedProductExtraDippingValidation,
+    orderedProductExtraToppingValidation,
+    orderedProductSidesValidation
+} from './productByTimingNestedValidation';
 
 export interface ProductByTiming {
     timeOfDay?: string,
@@ -35,7 +35,7 @@ export interface ProductByTiming {
     orderedProductChoices?: OrderedProductChoices[],
 }
 
-export const productByTimingSchema = yup.object().shape({
+export const productByTimingValidation = yup.object().shape({
     timeOfDay: yup.string().required(),
     timeOfDayId: yup.string().required(),
     deliveryTimings: yup.date().required(),
@@ -48,10 +48,10 @@ export const productByTimingSchema = yup.object().shape({
     ingredientSummary: yup.string().required(),
     image: yup.string().required(),
     price: yup.number().required(),
-    orderedProductExtraDippings: yup.array().of(orderedProductExtraDippingSchema),
-    orderedProductExtraToppings: yup.array().of(orderedProductExtraToppingSchema),
-    orderedProductSides: yup.array().of(orderedProductSidesSchema),
-    orderedProductDesserts: yup.array().of(orderedProductDessertSchema),
-    orderedProductDrinks: yup.array().of(orderedProductDrinksSchema),
-    orderedProductChoices: yup.array().of(orderedProductChoicesSchema),
+    orderedProductExtraDippings: yup.array().of(orderedProductExtraDippingValidation),
+    orderedProductExtraToppings: yup.array().of(orderedProductExtraToppingValidation),
+    orderedProductSides: yup.array().of(orderedProductSidesValidation),
+    orderedProductDesserts: yup.array().of(orderedProductDessertValidation),
+    orderedProductDrinks: yup.array().of(orderedProductDrinksValidation),
+    orderedProductChoices: yup.array().of(orderedProductChoicesValidation),
 });

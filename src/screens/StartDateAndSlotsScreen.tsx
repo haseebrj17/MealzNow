@@ -12,71 +12,18 @@ import { setFlashMessage } from '../features/flashMessages/flashMessageSlice';
 import FlashMessage from '../components/flashMessage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppDispatch, RootState } from '../Store';
-import { insertCustomerPromo, insertOrUpdateCustomerPackage } from '../db/methods/custmerNestedOperations';
-import { insertCustomerOrderPromo, insertOrUpdateCustomerOrderedPackage } from '../db/methods/cartNestedOperations';
 import { RouteProp } from '@react-navigation/native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { getDataFromTable } from '../db/methods/common';
 import DaySlots from '../components/FranchiseTimings';
 import { ScrollView } from 'react-native-gesture-handler';
-
-interface DayWithDate {
-    dayName: string;
-    date: string;
-}
-
-interface SlotDetail {
-    Id: string;
-    Time: string;
-}
-
-interface DayWithDateAndSlots extends DayWithDate {
-    dayId: string;
-    slots: MealSelection;
-}
-
-interface MealSelection {
-    Lunch?: SlotDetail;
-    Dinner?: SlotDetail;
-}
-
-interface SelectedSlots {
-    [day: string]: MealSelection;
-}
-
-interface ServingDays {
-    Id: string,
-    Name: string,
-}
-
-
-interface ServingTimeSlot {
-    Id: string;
-    SlotStart: string;
-    SlotEnd: string;
-}
-
-interface ServingTiming {
-    Id: string;
-    Name: string;
-    ServingTime: ServingTimeSlot[];
-}
-
-interface FranchiseTiming {
-    Id: string;
-    Day: string;
-    OpeningTime: string;
-    ClosingTime: string;
-    Open: boolean;
-    ServingTimings: ServingTiming[];
-}
-
-type FranchiseTimings = FranchiseTiming[];
+import { FranchiseTimings, ServingDay } from '../types/franchise';
+import { DayWithDateAndSlots, MealSelection } from '../types/temp';
+import { SelectedSlots } from '../types/slotsAndDates';
 
 type RootStackParamList = {
     StartDateAndSlots: {
         packageId: string | null,
-        selectedServingDays: ServingDays[]
+        selectedServingDays: ServingDay[]
     };
     Meals: {
         packageId: string | null,
@@ -90,10 +37,15 @@ interface StartDateAndSlotsScreenProps {
     navigation: StartDateAndSlotsScreenNavigationProp;
     route: RouteProp<RootStackParamList, 'StartDateAndSlots'>;
 }
+
 const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navigation, route }) => {
 
     const { franchiseTimings, franchiseSetting, loadingFranchise } = useSelector(
         (state: RootState) => state.franchise
+    );
+
+    const { customer } = useSelector(
+        (state: RootState) => state.customer
     );
 
     const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
@@ -104,7 +56,7 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
     const [selectedSlots, setSelectedSlots] = useState<SelectedSlots>({});
     const [numberOfWeeks, setNumberOfWeeks] = useState<number | null>(null);
 
-    const initializeSelectedSlots = (servingDays: ServingDays[], franchiseTimings: FranchiseTimings, timing: string | null): SelectedSlots => {
+    const initializeSelectedSlots = (servingDays: ServingDay[], franchiseTimings: FranchiseTimings, timing: string | null): SelectedSlots => {
         const initialSlots: SelectedSlots = {};
         servingDays.forEach(day => {
             const dayTiming = franchiseTimings.find(t => t.Day === day.Name);
@@ -140,7 +92,7 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
 
     const generateDatesForSelectedDays = (
         startDate: Date,
-        selectedDays: ServingDays[],
+        selectedDays: ServingDay[],
         numberOfWeeks: number,
         selectedSlots: SelectedSlots
     ): DayWithDateAndSlots[] => {
@@ -178,7 +130,6 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
         return dates;
     };
 
-
     const handleNavigation = () => {
         if (validateSlots()) {
             const generatedDates = generateDatesForSelectedDays(
@@ -195,6 +146,7 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
             alert("Please ensure all slots are filled correctly.");
         }
     };
+
     const validateSlots = () => {
         let isValid = true;
 
@@ -219,7 +171,6 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
         return isValid;
     };
 
-
     const showDatePicker = () => {
         setDatePickerVisibility(true);
     };
@@ -234,24 +185,14 @@ const StartDateAndSlotsScreen: React.FC<StartDateAndSlotsScreenProps> = ({ navig
     };
 
     useEffect(() => {
-        let timing: number | any[] | null = null;
-        const timings = async () => {
-            await getDataFromTable(
-                "CustomerPackage",
-                ["timings", "numberOfWeeks"],
-                "packageId = ?",
-                [route?.params?.packageId]
-            ).then(data => {
-                timing = data[0]?.timings;
-                const timingString: string | null = franchiseSetting?.MealsPerDay.find((meal) => meal.Timings === timing)?.Title ?? null;
-                setTiming(timingString);
-                setNumberOfWeeks(data[0]?.numberOfWeeks);
-            }).catch(error => {
-                console.error(error);
-            });
+        let timing: number | null = null;
+
+        if (customer) {
+            const timingString: string | null = franchiseSetting?.MealsPerDay.find((meal) => meal.Timings === customer.customerPackage.timings)?.Title ?? null;
+            setTiming(timingString);
+            setNumberOfWeeks(customer.customerPackage.numberOfWeeks);
         }
 
-        timings();
     }, [route?.params?.packageId, franchiseSetting]);
 
     return (

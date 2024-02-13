@@ -1,8 +1,8 @@
 import * as yup from 'yup';
-import { ProductByDay, productByDaySchema } from './productByDaySchema';
-import { CustomerOrderedPackage, customerOrderedPackageSchema } from './customerOrderedPackageSchema';
-import { CustomerOrderPromo, customerOrderPromoSchema } from './customerOrderPromoSchema';
-import { CustomerOrderPayment, customerOrderPaymentSchema } from './customerOrderPaymentSchema';
+import { ProductByDay, productByDayValidation } from './productByDayValidation';
+import { CustomerOrderedPackage, customerOrderedPackageValidation } from './customerOrderedPackageValidation';
+import { CustomerOrderPromo, customerOrderPromoValidation } from './customerOrderPromoValidation';
+import { CustomerOrderPayment, customerOrderPaymentValidation } from './customerOrderPaymentValidation';
 
 export interface Cart {
     _id?: string,
@@ -17,10 +17,10 @@ export interface Cart {
     customerOrderedPackage?: CustomerOrderedPackage,
     productByDay?: ProductByDay[],
     customerOrderPromo?: CustomerOrderPromo,
-    customerOrderPayment?: CustomerOrderPayment   
+    customerOrderPayment?: CustomerOrderPayment
 }
 
-export const cartSchema = yup.object().shape({
+export const cartValidation = yup.object().shape({
     _id: yup.string().required(),
     type: yup.string().required(),
     totalBill: yup.number().required(),
@@ -30,8 +30,8 @@ export const cartSchema = yup.object().shape({
     customerId: yup.string().required(),
     customerAddressId: yup.string().required(),
     franchiseId: yup.string().required(),
-    customerOrderedPackage: customerOrderedPackageSchema,
-    productByDay: yup.array().of(productByDaySchema),
-    customerOrderPromo: customerOrderPromoSchema,
-    customerOrderPayment: customerOrderPaymentSchema
+    customerOrderedPackage: customerOrderedPackageValidation,
+    productByDay: yup.array().of(productByDayValidation),
+    customerOrderPromo: customerOrderPromoValidation,
+    customerOrderPayment: customerOrderPaymentValidation
 });

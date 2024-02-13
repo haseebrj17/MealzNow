@@ -7,14 +7,13 @@ import {
     CustomerProductOutline,
     CustomerPromo,
     Preference,
-    customerDeviceSchema,
-    customerPackageSchema,
-    customerPasswordSchema,
-    customerPaymentSchema,
-    customerProductOutlineSchema,
-    customerPromoSchema,
-    preferenceSchema,
-} from "./customerNestedSchema";
+    customerDeviceValidation,
+    customerPackageValidation,
+    customerPaymentValidation,
+    customerProductOutlineValidation,
+    customerPromoValidation,
+    preferenceValidation,
+} from "./customerNestedValidation";
 
 export interface Customer {
     _id?: string;
@@ -31,11 +30,10 @@ export interface Customer {
     customerPackage?: CustomerPackage;
     customerPromo?: CustomerPromo;
     customerPayment?: CustomerPayment;
-    customerPassword?: CustomerPassword;
     customerDevice?: CustomerDevice;
 }
 
-export const customerSchema = yup.object().shape({
+export const customerValidation = yup.object().shape({
     _id: yup.string().required(),
     type: yup.string().required(),
     fullName: yup.string().required(),
@@ -45,13 +43,12 @@ export const customerSchema = yup.object().shape({
     isNumberVerified: yup.bool().required(),
     isEmailVerified: yup.bool().required(),
     cityId: yup.string(),
-    preference: preferenceSchema.required(),
-    customerProductOutline: customerProductOutlineSchema.required(),
-    customerPackage: customerPackageSchema.required(),
-    customerPromo: customerPromoSchema,
-    customerPayment: customerPaymentSchema.required(),
-    customerPassword: customerPasswordSchema.required(),
-    customerDevice: customerDeviceSchema.required(),
+    preference: preferenceValidation.required(),
+    customerProductOutline: customerProductOutlineValidation.required(),
+    customerPackage: customerPackageValidation.required(),
+    customerPromo: customerPromoValidation,
+    customerPayment: customerPaymentValidation.required(),
+    customerDevice: customerDeviceValidation.required(),
 });
 
 

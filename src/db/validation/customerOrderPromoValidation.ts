@@ -6,7 +6,7 @@ export interface CustomerOrderPromo {
     percent?: string
 }
 
-export const customerOrderPromoSchema = yup.object().shape({
+export const customerOrderPromoValidation = yup.object().shape({
     type: yup.string().required(),
     name: yup.string().required(),
     percent: yup.string().required(),

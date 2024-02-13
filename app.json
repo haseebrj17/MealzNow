@@ -37,6 +37,7 @@
       "package": "co.foodsnow.MealzNow"
     },
     "web": {
+      "bundler": "metro",
       "favicon": "./src/assets/MNPublishingLogo512.png"
     },
     "extra": {

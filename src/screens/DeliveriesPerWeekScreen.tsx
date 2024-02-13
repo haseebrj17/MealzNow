@@ -13,17 +13,13 @@ import FlashMessage from '../components/flashMessage';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { RouteProp } from '@react-navigation/native';
 import { RootState } from '../Store';
-import { insertOrUpdateCustomerPackage } from '../db/methods/custmerNestedOperations';
-import { insertOrUpdateCustomerOrderedPackage } from '../db/methods/cartNestedOperations';
-
-interface ServingDays {
-    Id: string;
-    Name: string;
-}
+import { updateCustomerPackage } from '../features/customer/customerSlice';
+import { ServingDay } from '../types/franchise';
+import { updateCustomerOrderedPackage } from '../features/cart/cartSlice';
 
 type RootStackParamList = {
     DeliveriesPerWeek: { packageId: string | null };
-    StartDateAndSlots: { packageId: string | null, selectedServingDays: ServingDays[] };
+    StartDateAndSlots: { packageId: string | null, selectedServingDays: ServingDay[] };
 };
 
 type DeliveriesPerWeekScreenNavigationProp = StackNavigationProp<RootStackParamList, 'DeliveriesPerWeek'>;
@@ -34,6 +30,8 @@ interface DeliveriesPerWeekScreenProps {
 }
 
 const DeliveriesPerWeekScreen: React.FC<DeliveriesPerWeekScreenProps> = ({ navigation, route }) => {
+
+    const dispatch = useDispatch();
 
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
     const [disabled, setDisabled] = useState(true)
@@ -50,6 +48,10 @@ const DeliveriesPerWeekScreen: React.FC<DeliveriesPerWeekScreenProps> = ({ navig
         if (weekCount === 2) return;
         setWeekCount(weekCount - 1);
     }
+
+    const { customer } = useSelector(
+        (state: RootState) => state.customer
+    );
 
     const { franchiseSetting, loadingFranchise } = useSelector(
         (state: RootState) => state.franchise
@@ -76,24 +78,26 @@ const DeliveriesPerWeekScreen: React.FC<DeliveriesPerWeekScreenProps> = ({ navig
     };
 
     const handleNext = async () => {
-
         if (!packageId || selectedTypes.length < 3 || weekCount < 2) return;
 
         const packageData = {
-            packageId: packageId,
-            numberOfDays: selectedTypes.length,
+            packageId: customer?.customerPackage?.packageId ?? '',
+            packageName: '',
+            timings: customer?.customerPackage?.timings ?? 0,
+            totalNumberOfMeals: 0,
+            numberOfDays: selectedTypes.length * weekCount,
             numberOfWeeks: weekCount,
+            mealzPerDay: customer?.customerPackage?.mealzPerDay ?? '',
         };
 
         const selectedServingDays = servingDays.filter(day => selectedTypes.includes(day.Id));
 
         try {
-            const resCOP = await insertOrUpdateCustomerOrderedPackage(packageData);
-            const resCP = await insertOrUpdateCustomerPackage(packageData);
-            console.log(resCOP, resCP);
-            if (resCOP && resCP) {
-                navigation.navigate('StartDateAndSlots', { packageId: packageId, selectedServingDays: selectedServingDays });
-            }
+            dispatch(updateCustomerPackage(packageData));
+            dispatch(updateCustomerOrderedPackage(packageData));
+            console.log("Package data updated in Redux state");
+
+            navigation.navigate('StartDateAndSlots', { packageId: packageId, selectedServingDays: selectedServingDays });
         } catch (error) {
             console.error(error);
         }

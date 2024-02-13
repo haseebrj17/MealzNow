@@ -14,17 +14,14 @@ import { clientData } from '../shared/ClientData';
 import { fetchFranchiseData } from '../features/franchise/franchiseSlice';
 import { AppDispatch, RootState } from '../Store';
 import { MealTypeShimmer } from '../components/skeleton';
-import { insertOrUpdateCustomerProductOutline } from '../db/methods/custmerNestedOperations';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import Fonts from '../assets/fonts/Fonts';
+import { updateCustomerProductOutline } from '../features/customer/customerSlice';
+import { AspectRatioMap } from '../types/common';
 
 const config = require('../../package.json').projectName;
 const CLIENT_NAME = config.name;
-
-interface AspectRatioMap {
-    [key: string]: number;
-}
 
 type RootStackParamList = {
     MealType: undefined;
@@ -72,12 +69,8 @@ const MealTypeScreen: React.FC<MealTypeScreenProps> = ({ navigation }) => {
         setDisabled(false);
     };
 
-    // if (!fontsLoaded) {
-    //     return <AppLoading />;
-    // }
-
     const insertData = async () => {
-        const outline = productOutline.find((item: any) => item?.Id === selectedType);
+        const outline = productOutline.find((item) => item?.Id === selectedType);
         if (!outline) {
             console.error("Outline not found");
             return;
@@ -87,24 +80,23 @@ const MealTypeScreen: React.FC<MealTypeScreenProps> = ({ navigation }) => {
             outlineId: outline.Id,
             title: outline.Title,
             description: outline.Description,
-            icon: outline.Icon
+            icon: outline.Icon,
+            customerProductInclusion: null
         };
 
         try {
-            const res = await insertOrUpdateCustomerProductOutline(outlineData);
-            console.log(res);
-            if (res) {
-                if (outlineData.title === 'Vegetarian') {
-                    navigation.navigate('PreferredCuisine');
-                } else {
-                    navigation.navigate('Allergies', { outlineId: selectedType });
-                }
+            dispatch(updateCustomerProductOutline(outlineData));
+            console.log("Outline data updated in Redux store");
+
+            if (outlineData.title === 'Vegetarian') {
+                navigation.navigate('PreferredCuisine');
+            } else {
+                navigation.navigate('Allergies', { outlineId: selectedType });
             }
         } catch (error) {
             console.error(error);
         }
     };
-
 
     const updateAspectRatios = async (items: any[]) => {
         const ratios: AspectRatioMap = {};
@@ -121,7 +113,7 @@ const MealTypeScreen: React.FC<MealTypeScreenProps> = ({ navigation }) => {
                 ratios[item.Id] = ratio;
             } catch (error) {
                 console.error(error);
-                ratios[item.Id] = 1; // default ratio in case of an error
+                ratios[item.Id] = 1;
             }
         }
         setAspectRatios(ratios);
@@ -212,7 +204,6 @@ const MealTypeScreen: React.FC<MealTypeScreenProps> = ({ navigation }) => {
                                 <Text
                                     style={{
                                         fontSize: Display.setHeight(3.5),
-                                        // fontFamily: 'RC',
                                         fontWeight: '600',
                                         color: theme.colors.primary.dark
                                     }}

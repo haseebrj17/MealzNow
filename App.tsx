@@ -9,6 +9,9 @@ import { config } from "@gluestack-ui/config";
 import { RealmProvider } from '@realm/react';
 import initializeRealm from './src/db/Db';
 import LoadingOverlay from './src/components/LoadingOverlay';
+import './ReactotronConfig'; // Make sure this is the first import
+import { Platform } from 'react-native';
+
 
 const App = () => {
 
@@ -17,7 +20,11 @@ const App = () => {
   useEffect(() => {
     async function setup() {
       try {
-        await initializeRealm();
+
+        if (Platform.OS !== 'web') {
+          await initializeRealm();
+          setRealmReady(true);
+        }
         setRealmReady(true);
       } catch (error) {
         console.error("Realm initialization error:", error);
@@ -29,17 +36,21 @@ const App = () => {
 
   if (!realmReady) {
     return (
-      <LoadingOverlay />
+      <SafeAreaProvider>
+        <LoadingOverlay />
+      </SafeAreaProvider>
     );
   }
 
   return (
-    <Provider store={store}>
-      <GluestackUIProvider config={config}>
-        <Navigators />
-        <FlashMessage />
-      </GluestackUIProvider>
-    </Provider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <GluestackUIProvider config={config}>
+          <Navigators />
+          <FlashMessage />
+        </GluestackUIProvider>
+      </Provider>
+    </SafeAreaProvider>
   );
 };
 

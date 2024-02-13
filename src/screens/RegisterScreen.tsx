@@ -25,11 +25,13 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { Entypo } from '@expo/vector-icons';
 import EntypoIconName from '@expo/vector-icons/build/Entypo';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../Store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../Store';
 import { setToken, setUserData } from '../features/general/generalSlice';
 import jwt_Decode from "jwt-decode";
 import AnimatedLottieView from 'lottie-react-native';
+import { updateCustomerInfo, updateFranchiseInfo } from '../features/cart/cartSlice';
+import { UserData } from '../types/general';
 
 const { width, height } = Dimensions.get('screen')
 
@@ -63,196 +65,10 @@ interface CodeError {
 }
 
 
-interface Package {
-    Id: string;
-    Name: string;
-    PackageType: number;
-    IncludesDrinks: boolean;
-    IncludesSides: boolean;
-    IncludesDessert: boolean;
-    IncludesToppings: boolean;
-    IncludesDippings: boolean;
-    IncludesDelivery: boolean;
-    Price: number;
-    FranchiseId: string,
-}
-
-interface CustomerPackage {
-    packageId: string;
-    packageName: string;
-    totalNumberOfMeals: number;
-    numberOfDays: number;
-    timings: number;
-    numberOfWeeks: number;
-}
-
-type Packages = Package[];
-
-interface ProductAllergy {
-    AllergyName: string;
-}
-
-interface ProductPrice {
-    Id: string;
-    Price: number;
-    Name: string;
-    Description: string;
-}
-
-interface ProductCategory {
-    CategoryId: string;
-    CategoryName: string;
-    CategoryType: string;
-}
-
-interface ProductExtraDipping {
-    Id: string;
-    Name: string;
-    Detail: string;
-    ProductExtraDippingAllergy: ProductExtraDippingAllergy[] | null;
-    ProductExtraDippingPrice: ProductExtraDippingPrice[] | null;
-}
-
-interface ProductExtraDippingAllergy {
-    AllergyName: string;
-}
-
-interface ProductExtraDippingPrice {
-    Id: string;
-    Price: number;
-    Name: string;
-    Description: string;
-}
-
-interface ProductExtraTopping {
-    Id: string;
-    Name: string;
-    Detail: string;
-    ProductExtraToppingAllergy: ProductExtraToppingAllergy[] | null;
-    ProductExtraToppingPrice: ProductExtraToppingPrice[] | null;
-}
-
-interface ProductExtraToppingAllergy {
-    AllergyName: string;
-}
-
-interface ProductExtraToppingPrice {
-    Id: string;
-    Price: number;
-    Name: string;
-    Description: string;
-}
-
-interface ProductItemOutline {
-    Id: string;
-    Name: string;
-}
-
-interface ProductChoices {
-    Name: string;
-    Detail: string;
-}
-
-interface Dish {
-    Id: string;
-    Name: string;
-    Detail: string;
-    EstimatedDeliveryTime: number,
-    Sequence: number;
-    SpiceLevel: number;
-    Type: string;
-    IngredientSummary: string;
-    IngredientDetail: string;
-    Image: string;
-    IsActive: boolean;
-    ShowExtraTopping: boolean;
-    ShowExtraDipping: boolean;
-    ProductAllergy: ProductAllergy[] | null;
-    ProductPrice: ProductPrice[];
-    ProductCategory: ProductCategory[];
-    CategoryId: string;
-    ProductExtraDipping: ProductExtraDipping[] | null;
-    ProductExtraTopping: ProductExtraTopping[] | null;
-    ProductItemOutline: ProductItemOutline[] | null;
-    ProductChoices: ProductChoices[] | null;
-}
-
-interface DayWithDate {
-    dayName: string;
-    date: string;
-}
-
-interface SlotDetail {
-    Id: string;
-    Time: string;
-}
-
-interface DayWithDateAndSlots extends DayWithDate {
-    dayId: string;
-    slots: SlotDetail[];
-}
-
-interface MealSelection {
-    Lunch?: SlotDetail;
-    Dinner?: SlotDetail;
-}
-
-interface MealPlan {
-    dayId: string;
-    day: string;
-    date: string;
-    meals: MealsForTheDay;
-}
-
-interface MealsForTheDay {
-    [key: string]: MealDetails | undefined;
-    Lunch?: MealDetails;
-    Dinner?: MealDetails;
-}
-
-interface MealDetails {
-    timing: string;
-    timingId: string;
-    dish: Dish;
-    perks: Perks;
-}
-
-interface Perks {
-    IncludesDrinks: boolean;
-    IncludesSides: boolean;
-    IncludesDessert: boolean;
-    IncludesToppings?: boolean;
-    IncludesDippings?: boolean;
-}
-
 type RootStackParamList = {
-    Register: {
-        data: MealPlan[],
-        packages: CustomerPackage,
-        packageType: Package,
-        totalAmount: number,
-        totalNumberOfMeals: number,
-        generatedDates: DayWithDateAndSlots[] | null,
-        packageId: string
-    };
-    AddressAccess: {
-        data: MealPlan[],
-        packages: CustomerPackage,
-        packageType: Package,
-        totalAmount: number,
-        totalNumberOfMeals: number,
-        generatedDates: DayWithDateAndSlots[] | null,
-        packageId: string
-    };
-    Login: {
-        data: MealPlan[],
-        packages: CustomerPackage,
-        packageType: Package,
-        totalAmount: number,
-        totalNumberOfMeals: number,
-        generatedDates: DayWithDateAndSlots[] | null,
-        packageId: string
-    };
+    Register: undefined;
+    AddressAccess: undefined;
+    Login: undefined;
 };
 
 type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
@@ -273,6 +89,10 @@ interface AnimationData {
 const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, route }) => {
 
     const dispatch = useDispatch<AppDispatch>();
+
+    const { franchiseDetails } = useSelector(
+        (state: RootState) => state.franchise
+    );
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<FormErrors>({});
@@ -414,7 +234,9 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, route }) =>
             EmailAddress: inputs.email,
             ContactNumber: inputs.phone,
             Password: inputs.password,
-            CustomerDevice: inputs.customerDevice
+            CustomerDevice: [
+                { deviceId: deviceToken ?? 'ExponentPushToken[_tOMDtBWSSXjk-73I-K9pj]', isActive: true }
+            ]
         };
 
         setIsLoading(true);
@@ -455,20 +277,16 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, route }) =>
                 await StorageService.setToken(response?.data?.Token)
                 dispatch(setToken(response?.data?.Token));
 
-                const decodedData = jwt_Decode(response?.data?.Token)
+                const decodedData = jwt_Decode(response?.data?.Token) as UserData;
                 await StorageService.setUserData(decodedData)
                 dispatch(setUserData(decodedData))
 
+                dispatch(updateCustomerInfo({ customerId: decodedData?.Id }))
+
+                dispatch(updateFranchiseInfo({ franchiseId: franchiseDetails?.Id }))
+
                 setTimeout(() => {
-                    navigation.navigate('AddressAccess', {
-                        data: route?.params?.data,
-                        packages: route?.params?.packages,
-                        packageType: route?.params?.packageType,
-                        totalAmount: route?.params?.totalAmount,
-                        totalNumberOfMeals: route?.params?.totalNumberOfMeals,
-                        generatedDates: route?.params?.generatedDates,
-                        packageId: route?.params?.packageId
-                    })
+                    navigation.navigate('AddressAccess')
                 }, 3000);
                 Alert.alert('Erfolg', 'Ihr Konto wurde verifiziert!');
             } else {
@@ -667,15 +485,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, route }) =>
                         }}
                     >Sie haben bereits ein Konto? </Text>
                     <TouchableOpacity
-                        onPress={() => navigation.navigate('Login', {
-                            data: route?.params?.data,
-                            packages: route?.params?.packages,
-                            packageType: route?.params?.packageType,
-                            totalAmount: route?.params?.totalAmount,
-                            totalNumberOfMeals: route?.params?.totalNumberOfMeals,
-                            generatedDates: route?.params?.generatedDates,
-                            packageId: route?.params?.packageId
-                        })}
+                        onPress={() => navigation.navigate('Login')}
                     ><Text
                         style={{
                             fontWeight: "500",

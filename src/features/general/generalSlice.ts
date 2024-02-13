@@ -1,21 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { StorageService } from '../../services';
 import { setFlashMessage } from '../flashMessages/flashMessageSlice';
-
-interface GeneralState {
-    isAppLoading: boolean;
-    token: string;
-    isFirstTimeUse: boolean;
-    userData: any;
-    location: any;
-}
-
+import jwt_Decode from "jwt-decode";
+import { setCustomerId } from '../order/orderSlice';
+import { GeneralState } from '../../types/general';
+import { updateCustomerInfo, updateFranchiseInfo } from '../cart/cartSlice';
 
 const initialState: GeneralState = {
     isAppLoading: true,
     token: '',
     isFirstTimeUse: true,
-    userData: {},
+    userData: {
+        Id: '',
+        FullName: '',
+        EmailAdress: '',
+        ContactNumber: '',
+        UserRole: '',
+        FranchiseId: '',
+        exp: 0,
+        iss: '',
+        aud: ''
+    },
     location: {}
 };
 
@@ -42,7 +47,17 @@ export const generalSlice = createSlice({
             state.token = '';
         },
         clearUserData: (state) => {
-            state.userData = {};
+            state.userData = {
+                Id: '',
+                FullName: '',
+                EmailAdress: '',
+                ContactNumber: '',
+                UserRole: '',
+                FranchiseId: '',
+                exp: 0,
+                iss: '',
+                aud: ''
+            };
         }
     },
     extraReducers: {
@@ -73,8 +88,14 @@ export const appStart = () => async (dispatch: any) => {
             const location = await StorageService.getLocation();
             dispatch(setLocation(location || {}));
 
-            const userData = await StorageService.getUserData();
+            const userData = JSON.parse(StorageService.getUserData() || '{}');
             dispatch(setUserData(userData || {}));
+
+            dispatch(setCustomerId(userData?.Id));
+
+            dispatch(updateCustomerInfo({ customerId: userData?.Id }))
+
+            dispatch(updateFranchiseInfo({ franchiseId: userData?.FranchiseId }))
         }
     } catch (error) {
         console.error("Error during app start:", error);
@@ -83,17 +104,6 @@ export const appStart = () => async (dispatch: any) => {
         dispatch(setIsAppLoading(false));
     }
 };
-
-
-
-// interface UserData {
-//     Id: string;
-//     FullName: string;
-//     EmailAdress: string,
-//     ContactNumber: string,
-//     UserRole: string,
-//     FranchiseId: string
-// }
 
 // interface Location {
 //     Id: string;

@@ -5,7 +5,7 @@ export interface CustomerOrderPayment {
     orderType?: string
 }
 
-export const customerOrderPaymentSchema = yup.object().shape({
+export const customerOrderPaymentValidation = yup.object().shape({
     paymentType: yup.string().required(),
     orderType: yup.string().required(),
 });

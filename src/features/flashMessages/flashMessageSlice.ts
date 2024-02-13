@@ -1,19 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { FlashMessageState, SetFlashMessagePayload } from '../../types/flashMessage';
 
-// Define an interface for the state
-interface FlashMessageState {
-    message: string | null;
-    type: string | null;
-    timestamp: number | null;
-}
-
-// Define an interface for the payload of setFlashMessage action
-interface SetFlashMessagePayload {
-    message: string;
-    type: string;
-}
-
-// Initial state with types
 const initialState: FlashMessageState = {
     message: null,
     type: null,
