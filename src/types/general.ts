@@ -13,6 +13,7 @@ export interface UserData {
 export interface GeneralState {
     isAppLoading: boolean;
     token: string;
+    isOrderPlaced: boolean;
     isFirstTimeUse: boolean;
     userData: UserData;
     location: any;

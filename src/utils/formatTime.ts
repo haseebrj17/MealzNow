@@ -42,10 +42,21 @@ export function fDateAdd(date: Date, days: number) {
 export function formatTimeToAMPM(timeString: string) {
   const [hours24, minutes] = timeString.split(':').map(Number);
   const ampm = hours24 >= 12 ? 'PM' : 'AM';
-  const hours12 = hours24 % 12 || 12; // Convert to 12-hour format and handle midnight
+  const hours12 = hours24 % 12 || 12;
 
   return `${hours12.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${ampm}`;
 }
+
+export function formatTimeToAMPMNonISO(timeString: string) {
+  const timePart = timeString.includes('T') ? timeString.split('T')[1] : timeString;
+  
+  const [hours24, minutes] = timePart.split(':').map(Number);
+  const ampm = hours24 >= 12 ? 'PM' : 'AM';
+  const hours12 = hours24 % 12 || 12;
+
+  return `${hours12.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+}
+
 
 function getOrdinal(day: number): string {
   if (day > 3 && day < 21) return 'th';
@@ -63,9 +74,9 @@ export function fDateCustom(dateString: string) {
     if (Number.isNaN(date.getTime())) {
       throw new Error('Invalid date');
     }
-    const formattedDate = format(date, 'EEEE MMM d'); // Use 'd' instead of 'do'
+    const formattedDate = format(date, 'EEEE MMM d');
     const dayOfMonth = date.getDate();
-    return `${formattedDate}${getOrdinal(dayOfMonth)}`; // This now appends the ordinal correctly
+    return `${formattedDate}${getOrdinal(dayOfMonth)}`;
   } catch (error) {
     console.error('Date parsing error:', error);
     return '';

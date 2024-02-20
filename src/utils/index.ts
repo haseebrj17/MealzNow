@@ -9,7 +9,8 @@ import {
     fDateVerbose,
     fDateAdd,
     formatTimeToAMPM,
-    fDateCustom
+    fDateCustom,
+    formatTimeToAMPMNonISO
 } from "./formatTime";
 
 export {
@@ -23,5 +24,6 @@ export {
     fDateVerbose,
     fDateAdd,
     formatTimeToAMPM,
-    fDateCustom
+    fDateCustom,
+    formatTimeToAMPMNonISO
 };

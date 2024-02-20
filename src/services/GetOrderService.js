@@ -32,7 +32,6 @@ const getUserOrder = async (token) => {
                 headers: authHeader(token),
             }
         );
-        console.log(response)
 
         return handleResponse(response, 'Orders fetched successfully');
     } catch (error) {

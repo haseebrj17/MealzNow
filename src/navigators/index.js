@@ -34,8 +34,38 @@ const theme = {
 
 const Stack = createStackNavigator();
 
+const OrderPlacedStack = createStackNavigator(); // Create a Stack Navigator instance
+
+const OrderPlacedNavigator = () => (
+    <OrderPlacedStack.Navigator screenOptions={{ headerShown: false }}>
+        <OrderPlacedStack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="OrderConfirmation" component={OrderConfirmationScreen} />
+    </OrderPlacedStack.Navigator>
+);
+
+const MainAppNavigator = () => (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="MealType" component={MealTypeScreen} />
+        <Stack.Screen name="Allergies" component={AllergiesScreen} />
+        <Stack.Screen name="PreferredCuisine" component={PreferredCuisineScreen} />
+        <Stack.Screen name="PreferredCategories" component={PreferredCategoriesScreen} />
+        <Stack.Screen name="MealPerDay" component={MealPerDayScreen} />
+        <Stack.Screen name="DeliveriesPerWeek" component={DeliveriesPerWeekScreen} />
+        <Stack.Screen name="StartDateAndSlots" component={StartDateAndSlotsScreen} />
+        <Stack.Screen name="Meals" component={MealsScreen} />
+        <Stack.Screen name="Cart" component={CartScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="OrderConfirmation" component={OrderConfirmationScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="AddressAccess" component={AddressAccessScreen} />
+        <Stack.Screen name="AddressDetail" component={AddressDetailScreen} />
+    </Stack.Navigator>
+);
+
 const Navigators = () => {
-    const { isAppLoading, isFirstTimeUse } = useSelector((state) => state?.general);
+    const { isAppLoading, isOrderPlaced } = useSelector((state) => state?.general);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -54,28 +84,7 @@ const Navigators = () => {
 
     return (
         <NavigationContainer theme={theme}>
-            <Stack.Navigator
-                screenOptions={{
-                    headerShown: false,
-                }}
-            >
-                <Stack.Screen name="MealType" component={MealTypeScreen} />
-                <Stack.Screen name="Allergies" component={AllergiesScreen} />
-                <Stack.Screen name="PreferredCuisine" component={PreferredCuisineScreen} />
-                <Stack.Screen name="PreferredCategories" component={PreferredCategoriesScreen} />
-                <Stack.Screen name="MealPerDay" component={MealPerDayScreen} />
-                <Stack.Screen name="DeliveriesPerWeek" component={DeliveriesPerWeekScreen} />
-                <Stack.Screen name="StartDateAndSlots" component={StartDateAndSlotsScreen} />
-                <Stack.Screen name="Meals" component={MealsScreen} />
-                <Stack.Screen name="Cart" component={CartScreen} />
-                <Stack.Screen name="Profile" component={ProfileScreen} />
-                <Stack.Screen name="OrderConfirmation" component={OrderConfirmationScreen} />
-                <Stack.Screen name="Register" component={RegisterScreen} />
-                <Stack.Screen name="Login" component={LoginScreen} />
-                <Stack.Screen name="AddressAccess" component={AddressAccessScreen} />
-                <Stack.Screen name="AddressDetail" component={AddressDetailScreen} />
-                <Stack.Screen name="Home" component={HomeScreen} />
-            </Stack.Navigator>
+            {isOrderPlaced ? <OrderPlacedNavigator /> : <MainAppNavigator />}
         </NavigationContainer>
     );
 }

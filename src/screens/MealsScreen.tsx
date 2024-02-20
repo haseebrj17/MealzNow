@@ -4,7 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack'; // or NavigationP
 import { Separator, Stepper } from '../components'
 import { theme } from '../theme/theme';
 import { useFonts } from '../hooks/useFonts';
-import { Display, fDateCustom, transformImageUrl } from '../utils';
+import { Display, fDateAdd, fDateCustom, transformImageUrl } from '../utils';
 import Vegetarian from '../assets/icons/Vegetarian';
 import Omnivore from '../assets/icons/Omnivore';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ import { setFlashMessage } from '../features/flashMessages/flashMessageSlice';
 import FlashMessage from '../components/flashMessage';
 import { MaterialCommunityIcons, AntDesign, Entypo } from '@expo/vector-icons';
 import { RouteProp } from '@react-navigation/native';
-import { RootState } from '../Store';
+import { AppDispatch, RootState } from '../Store';
 import LottieView from 'lottie-react-native';
 import { createMealPlan } from '../components/DishAlgorithm';
 import { getImageAspectRatioWithCallBack } from '../utils/ImageAspect';
@@ -20,7 +20,7 @@ import Modal from "react-native-modal";
 import { ScrollView } from 'react-native-gesture-handler';
 import { BlurView } from 'expo-blur';
 import { number } from 'prop-types';
-import { addProductsByDay, updateCustomerInfo, updateCustomerOrderedPackage, updateFranchiseInfo, updateTotals } from '../features/cart/cartSlice';
+import { addOrderDeliveryDateTime, addProductsByDay, updateCustomerInfo, updateCustomerOrderedPackage, updateFranchiseInfo, updateTotals } from '../features/cart/cartSlice';
 import { setGeneratedDates, setPackageType } from '../features/temp/TempSlice';
 import { DayWithDateAndSlots } from '../types/temp';
 import { Dish, MealPlan, UserPreferences } from '../types/meal';
@@ -325,7 +325,7 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
         (state: RootState) => state.general
     );
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const [selectedType, setSelectedType] = useState<any | null>(null);
     const [disabled, setDisabled] = useState(true)
@@ -525,6 +525,7 @@ const MealsScreen: React.FC<MealsScreenProps> = ({ navigation, route }) => {
             numberOfWeeks: customer?.customerPackage?.numberOfWeeks ?? 0,
             mealzPerDay: customer?.customerPackage?.mealzPerDay ?? '',
         };
+        dispatch(addOrderDeliveryDateTime({orderDeliveryDateTime: route?.params?.generatedDates?.[0]?.date ?? fDateAdd(new Date(), 1).toISOString()}));
         dispatch(updateCustomerPackage(packageData))
         dispatch(updateCustomerOrderedPackage(packageData))
         dispatch(updateCustomerInfo({ customerId: userData?.Id }))

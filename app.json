@@ -3,7 +3,7 @@
     "name": "MealzNow",
     "slug": "mealznow",
     "scheme": "mealznow",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./src/assets/MNPublishingLogo512.png",
     "userInterfaceStyle": "light",
@@ -15,11 +15,17 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "updates": {
+      "url": "https://u.expo.dev/94e7f192-b914-4f1d-ba9c-a40eed5540aa",
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "co.foodsnow.MealzNow",
-      "runtimeVersion": {
-        "policy": "sdkVersion"
+      "config": {
+        "googleMapsApiKey": "AIzaSyDDBLnxNZqy3oW5zwMOP1SgsoGsa6TSHtc"
       },
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "We use your location to offer a personalized experience by showing you nearby restaurants and ensuring accurate delivery services.",
@@ -34,7 +40,13 @@
       "runtimeVersion": {
         "policy": "sdkVersion"
       },
-      "package": "co.foodsnow.MealzNow"
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBVNfVNStn3IlWxShOoS3a1FkzWVcuyq1E"
+        }
+      },
+      "package": "co.foodsnow.MealzNow",
+      "versionCode": 5
     },
     "web": {
       "bundler": "metro",
@@ -47,9 +59,6 @@
     },
     "runtimeVersion": {
       "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/94e7f192-b914-4f1d-ba9c-a40eed5540aa"
     },
     "plugins": [
       "expo-build-properties"

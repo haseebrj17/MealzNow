@@ -10,6 +10,7 @@ const initialState: GeneralState = {
     isAppLoading: true,
     token: '',
     isFirstTimeUse: true,
+    isOrderPlaced: false,
     userData: {
         Id: '',
         FullName: '',
@@ -36,6 +37,9 @@ export const generalSlice = createSlice({
         },
         setIsFirstTimeUse: (state, action: PayloadAction<boolean>) => {
             state.isFirstTimeUse = action.payload;
+        },
+        setIsOrderPlaced: (state, action: PayloadAction<boolean>) => {
+            state.isOrderPlaced = action.payload;
         },
         setUserData: (state, action: PayloadAction<any>) => {
             state.userData = action.payload;
@@ -68,6 +72,7 @@ export const {
     setIsAppLoading,
     setToken,
     setIsFirstTimeUse,
+    setIsOrderPlaced,
     setUserData,
     setLocation,
     clearToken,
@@ -78,8 +83,13 @@ export default generalSlice.reducer;
 
 export const appStart = () => async (dispatch: any) => {
     try {
-        const isFirstTimeUse = await StorageService.getFirstTimeUse();
-        dispatch(setIsFirstTimeUse(!isFirstTimeUse));
+        const isFirstTimeUseStr = await StorageService.getFirstTimeUse();
+        const isFirstTimeUse = isFirstTimeUseStr !== 'false';
+        dispatch(setIsFirstTimeUse(isFirstTimeUse));
+
+        const isOrderPlacedStr = await StorageService.getOrderPlaced();
+        const isOrderPlaced = isOrderPlacedStr === 'true';
+        dispatch(setIsOrderPlaced(isOrderPlaced));
 
         const token = await StorageService.getToken();
         if (token) {

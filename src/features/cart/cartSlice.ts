@@ -10,8 +10,6 @@ import {
 } from '../../types/cart';
 
 const initialCartState: Cart = {
-    _id: '',
-    type: '',
     totalBill: 0,
     totalItems: 0,
     orderDeliveryDateTime: new Date().toISOString(),
@@ -35,8 +33,8 @@ const initialCartState: Cart = {
         percent: '',
     },
     customerOrderPayment: {
-        paymentType: '',
-        orderType: ''
+        paymentType: 'COD',
+        orderType: 'Delivery'
     }
 };
 
@@ -100,6 +98,9 @@ const cartSlice = createSlice({
         addProductByDay: (state, action: PayloadAction<ProductByDay>) => {
             state.productByDay.push(action.payload);
         },
+        addOrderDeliveryDateTime: (state, action: PayloadAction<{ orderDeliveryDateTime: string }>) => {
+            state.orderDeliveryDateTime = action.payload.orderDeliveryDateTime;
+        },
     },
 });
 
@@ -115,7 +116,8 @@ export const {
     addProductByDay,
     addProductsByDay,
     updateTotals,
-    updateFranchiseInfo
+    updateFranchiseInfo,
+    addOrderDeliveryDateTime
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

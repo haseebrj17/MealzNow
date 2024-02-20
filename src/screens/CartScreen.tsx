@@ -12,14 +12,16 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import MN from '../assets/MN_LOGO_LG_NBG.png';
 import { Entypo, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import Button from '../components/Button';
-import { CartService, OrderService, UserAddressService } from "../services";
+import { CartService, OrderService, StorageService, UserAddressService } from "../services";
 import jwt_Decode from "jwt-decode";
 import { DayWithDateAndSlots } from '../types/temp';
 import { Dish, MealPlan, UserPreferences } from '../types/meal';
 import { CustomerPackage } from '../types/customer';
-import { ProductByDay } from '../types/cart';
+import { Cart, ProductByDay } from '../types/cart';
 import { Styles } from "../types/common";
-import { updateCustomerInfo } from "src/features/cart/cartSlice";
+import { updateCustomerInfo } from "../features/cart/cartSlice";
+import { setFlashMessage } from "../features/flashMessages/flashMessageSlice";
+import { setIsOrderPlaced } from "../features/general/generalSlice";
 
 const { width, height } = Dimensions.get('window')
 
@@ -30,6 +32,7 @@ type RootStackParamList = {
     AddressAccess: undefined;
     OrderConfirmation: undefined;
     Profile: undefined;
+    Home: undefined;
 };
 
 type CartScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Cart'>;
@@ -78,6 +81,18 @@ const CartScreen: React.FC<CartScreenProps> = ({ navigation, route }) => {
     );
 
     useEffect(() => {
+        if (token) {
+            setUserToken(token);
+        }
+    }, [token]);
+
+    useEffect(() => {
+        if (cart) {
+            setCart(cart);
+        }
+    }, [cart]);
+
+    useEffect(() => {
         console.log(cart)
     }, [cart]);
 
@@ -103,17 +118,20 @@ const CartScreen: React.FC<CartScreenProps> = ({ navigation, route }) => {
     const [userToken, setUserToken] = useState<string | null>(null);
     const [userAddresses, setUserAddresses] = useState<any | null>(null);
     const [selectedType, setSelectedType] = useState<string | null>(null);
+    const [Cart, setCart] = useState<Cart | null>(null);
 
     const handleSelectedType = (Id: string) => {
         setSelectedType(Id);
+        setCart({ ...cart, customerAddressId: Id });
+        dispatch(updateCustomerInfo({ customerAddressId: Id }));
         setDisabled(false);
     };
 
     useEffect(() => {
-        if (token) {
-            setUserToken(token);
+        if (!token) {
+            setDisabled(false);
         }
-    }, [token]);
+    }, [])
 
     useEffect(() => {
         async function Addressfunction(userToken: string) {
@@ -184,111 +202,19 @@ const CartScreen: React.FC<CartScreenProps> = ({ navigation, route }) => {
     }, [promo, totalAmount, packageType, packageData]);
 
     const handelOrder = async () => {
-
-        //     try {
-        //         const productByDays: ProductByDayDto[] = productByDay.map((item) => {
-        //             const timings: ProductByTimingDto[] = [];
-
-        //             if (item.meals.Lunch) {
-        //                 timings.push({
-        //                     TimeOfDayId: item.meals.Lunch.timingId,
-        //                     TimeOfDay: item.meals.Lunch.timing,
-        //                     DeliveryTimings: item.meals.Lunch.timing,
-        //                     Name: item.meals.Lunch.dish.Name,
-        //                     Detail: item.meals.Lunch.dish.Detail,
-        //                     EstimatedDeliveryTime: item.meals.Lunch.dish.EstimatedDeliveryTime,
-        //                     SpiceLevel: item.meals.Lunch.dish.SpiceLevel,
-        //                     Type: item.meals.Lunch.dish.Type,
-        //                     IngredientSummary: item.meals.Lunch.dish.IngredientSummary,
-        //                     Image: item.meals.Lunch.dish.Image,
-        //                     Price: item.meals.Lunch.dish.ProductPrice[0].Price,
-        //                     OrderedProductExtraDipping: null,
-        //                     OrderedProductExtraTopping: null,
-        //                     OrderedProductSides: null,
-        //                     OrderedProductDessert: null,
-        //                     OrderedProductDrinks: null,
-        //                     OrderedProductChoices: null,
-        //                 });
-        //             }
-
-        //             if (item.meals.Dinner) {
-        //                 timings.push({
-        //                     TimeOfDayId: item.meals.Dinner.timingId,
-        //                     TimeOfDay: item.meals.Dinner.timing,
-        //                     DeliveryTimings: item.meals.Dinner.timing,
-        //                     Name: item.meals.Dinner.dish.Name,
-        //                     Detail: item.meals.Dinner.dish.Detail,
-        //                     EstimatedDeliveryTime: item.meals.Dinner.dish.EstimatedDeliveryTime,
-        //                     SpiceLevel: item.meals.Dinner.dish.SpiceLevel,
-        //                     Type: item.meals.Dinner.dish.Type,
-        //                     IngredientSummary: item.meals.Dinner.dish.IngredientSummary,
-        //                     Image: item.meals.Dinner.dish.Image,
-        //                     Price: item.meals.Dinner.dish.ProductPrice[0].Price,
-        //                     OrderedProductExtraDipping: null,
-        //                     OrderedProductExtraTopping: null,
-        //                     OrderedProductSides: null,
-        //                     OrderedProductDessert: null,
-        //                     OrderedProductDrinks: null,
-        //                     OrderedProductChoices: null,
-        //                 });
-        //             }
-
-        //             return {
-        //                 DayId: item.dayId,
-        //                 Day: item.day,
-        //                 DeliveryDate: item.date,
-        //                 ProductByTiming: timings,
-        //             };
-        //         });
-
-        //         const decoded: {
-        //             Id: string;
-        //             FullName: string;
-        //             EmailAddress: string;
-        //             ContactNumber: string;
-        //             UserRole: string;
-        //             FranchiseId: number;
-        //             exp: number;
-        //             iss: string;
-        //             aud: string;
-        //         } = jwt_Decode(token);
-        //         const order = {
-        //             totalBill: amountAfterPromo,
-        //             totalNumberOfMeals: route?.params?.totalNumberOfMeals,
-        //             orderDeliveryDateTime: route?.params?.generatedDates[0]?.date ?? '',
-        //             instructions: '',
-        //             customerId: decoded?.Id,
-        //             customerAddressId: selectedType ?? 'b6e7bcce-a2e5-4df1-6caf-08dc11b9f98e',
-        //             franchiseId: decoded?.FranchiseId,
-        //             OrderStatus: 'OrderPlaced',
-        //             CustomerOrderedPackageDto: {
-        //                 PackageId: route?.params?.packages.packageId,
-        //                 PackageName: route?.params?.packages.packageName,
-        //                 TotalNumberOfMeals: route?.params?.packages.totalNumberOfMeals,
-        //                 NumberOfDays: route?.params?.packages.numberOfDays,
-        //                 Timings: route?.params?.packages.timings,
-        //                 NumberOfWeeks: route?.params?.packages.numberOfWeeks,
-        //             },
-        //             CustomerOrderPromo: {
-        //                 Type: 'New User',
-        //                 Name: '2 Mealz Per Day',
-        //                 Percent: promo,
-        //             },
-        //             CustomerOrderPayment: {
-        //                 PaymentType: 'Cash On Delivery',
-        //                 OrderType: 'Deliver',
-        //             },
-        //             ProductByDay: productByDay,
-        //         }
-
-        //         console.log('order', order);
-        //         const response = await OrderService.placeOrder(order, token);
-        //         if (response) {
-        //             navigation.navigate('OrderConfirmation');
-        //         }
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
+        try {
+            const response = await OrderService.placeOrder(cart, token);
+            if (response?.status) {
+                navigation.navigate('OrderConfirmation');
+                dispatch(setFlashMessage({ message: "Order Placed Successfully", type: 'success' }));
+                dispatch(setIsOrderPlaced(true))
+                StorageService.setOrderPlaced();
+            } else {
+                dispatch(setFlashMessage({ message: "Error placing order", type: 'error' }));
+            }
+        } catch (error) {
+            dispatch(setFlashMessage({ message: "Error placing order", type: 'error' }));
+        }
     }
 
     return (
@@ -313,6 +239,7 @@ const CartScreen: React.FC<CartScreenProps> = ({ navigation, route }) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         position: 'absolute',
+                        left: theme.padding.medium,
                         bottom: '7%',
                         zIndex: 1,
                     }}
@@ -765,6 +692,7 @@ const CartScreen: React.FC<CartScreenProps> = ({ navigation, route }) => {
                     condition={token.length > 0}
                     navigation={navigation}
                     handelNext={() => handelOrder()}
+                    disabled={disabled}
                 />
             </View>
         </View>
@@ -774,11 +702,13 @@ const CartScreen: React.FC<CartScreenProps> = ({ navigation, route }) => {
 const ConditionalRender = ({
     condition,
     navigation,
-    handelNext
+    handelNext,
+    disabled
 }: {
     condition: boolean,
     navigation: CartScreenNavigationProp
     handelNext: () => void
+    disabled: boolean
 }) => {
     return (
         <>
@@ -791,7 +721,7 @@ const ConditionalRender = ({
                         title={'Place Order'}
                         color={theme.colors.primary.darker}
                         textColor={theme.colors.custom[4].snuff}
-                        disabled={false}
+                        disabled={disabled}
                     />
                     :
                     <Button
@@ -801,13 +731,12 @@ const ConditionalRender = ({
                         title={'Sign Up to Checkout'}
                         color={theme.colors.primary.darker}
                         textColor={theme.colors.custom[4].snuff}
-                        disabled={false}
+                        disabled={disabled}
                     />
             }
         </>
     )
 }
-
 
 const getStyles = (theme: ThemeType): StyleSheet.NamedStyles<Styles> => StyleSheet.create({
     // container: {
@@ -853,6 +782,5 @@ const getStyles = (theme: ThemeType): StyleSheet.NamedStyles<Styles> => StyleShe
         paddingRight: theme.padding.medium
     }
 });
-
 
 export default CartScreen;

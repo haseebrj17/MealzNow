@@ -8,3 +8,5 @@ export * from './cart';
 export * from './common';
 export * from './slotsAndDates';
 export * from './meal';
+export * from './user';
+export * from './dishCard';

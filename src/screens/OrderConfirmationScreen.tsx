@@ -13,6 +13,7 @@ const { width, height } = Dimensions.get('screen')
 type RootStackParamList = {
     OrderConfirmation: undefined;
     Cart: undefined;
+    Home: undefined;
 };
 
 type OrderConfirmationScreenNavigationProp = StackNavigationProp<RootStackParamList, 'OrderConfirmation'>;
@@ -55,9 +56,7 @@ const OrderConfirmationScreen: React.FC<OrderConfirmationScreenProps> = ({ navig
             <TouchableOpacity
                 onPress={() => {
                     if (navigation.canGoBack()) {
-                        navigation.navigate('Cart');
-                    } else {
-                        navigation.navigate('Cart');
+                        navigation.navigate('Home');
                     }
                 }}
                 style={{

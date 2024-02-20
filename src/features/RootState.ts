@@ -6,6 +6,7 @@ import dashboardDataSlice from './restaurants/dashboardDataSlice';
 import customerSlice from './customer/customerSlice';
 import cartSlice from './cart/cartSlice';
 import tempSlice from './temp/TempSlice';
+import userSlice from './user/userSlice';
 
 const rootReducer = combineReducers({
     general: generalSlice,
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
     dashboard: dashboardDataSlice,
     customer: customerSlice,
     cart: cartSlice,
-    temp: tempSlice
+    temp: tempSlice,
+    user: userSlice
 });
 
 export default rootReducer;

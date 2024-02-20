@@ -1,7 +1,5 @@
 
 export interface Cart {
-    _id: string;
-    type: string;
     totalBill: number;
     totalItems: number;
     orderDeliveryDateTime: string;
@@ -32,8 +30,8 @@ export interface CustomerOrderPromo {
 }
 
 export interface CustomerOrderPayment {
-    paymentType?: string;
-    orderType?: string;
+    paymentType: string;
+    orderType: number;
 }
 
 export interface ProductByDay {

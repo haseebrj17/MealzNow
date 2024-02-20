@@ -7,6 +7,8 @@ import DishModal from "./DishModal";
 import Input from "./Input";
 import Loader from "./Loader";
 import ToggleButton from "./ToggleButton";
+import Clock from "./Clock";
+import DishCard from "./DishCard";
 
 export {
     Stepper,
@@ -18,4 +20,6 @@ export {
     Input,
     Loader,
     ToggleButton,
+    Clock,
+    DishCard
 };

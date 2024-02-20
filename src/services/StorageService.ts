@@ -95,6 +95,8 @@ const getDeviceToken = async () => {
 export default {
     setFirstTimeUse,
     getFirstTimeUse,
+    setOrderPlaced,
+    getOrderPlaced,
     setToken,
     getToken,
     setUserData,

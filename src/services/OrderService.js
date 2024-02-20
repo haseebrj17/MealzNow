@@ -7,7 +7,7 @@ const AuthRequest = axios.create({
 });
 
 const handleResponse = (response, successMessage) => {
-    if (response?.status === 200) {
+    if (response?.status === 200 && response?.data?.isSuccess === true) {
         return {
             status: true,
             message: successMessage,
@@ -16,7 +16,7 @@ const handleResponse = (response, successMessage) => {
     } else {
         return {
             status: false,
-            message: response?.data?.message || 'Unknown error occurred',
+            message: response?.data?.ErrorMessage || 'Unknown error occurred',
         };
     }
 };
@@ -31,6 +31,8 @@ const placeOrder = async (inputs, token) => {
                 headers: authHeader(token),
             }
         );
+
+        console.log(response)
 
         return handleResponse(response, 'Order placed successfully');
     } catch (error) {
