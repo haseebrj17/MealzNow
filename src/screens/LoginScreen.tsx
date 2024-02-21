@@ -31,6 +31,7 @@ import { setToken, setUserData } from '../features/general/generalSlice';
 import jwt_Decode from "jwt-decode";
 import AnimatedLottieView from 'lottie-react-native';
 import LoadingOverlay from '../components/LoadingOverlay';
+import {UserData} from "../types/general";
 
 
 const { width, height } = Dimensions.get('screen')
@@ -356,7 +357,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation, route }) => {
                 dispatch(setToken(response?.data?.Token));
 
                 const decodedData = jwt_Decode(response?.data?.Token);
-                await StorageService.setUserData(decodedData);
+                await StorageService.setUserData(decodedData as UserData);
                 dispatch(setUserData(decodedData));
                 navigation.navigate('Cart', {
                     data: route?.params?.data,

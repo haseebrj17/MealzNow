@@ -22,7 +22,6 @@ import {
     CustomerPackageSchema,
     CustomerPaymentSchema,
     CustomerPromoSchema,
-    CustomerPasswordSchema,
     CustomerDeviceSchema
 } from "./customerModel";
 

@@ -3,7 +3,7 @@
     "name": "MealzNow",
     "slug": "mealznow",
     "scheme": "mealznow",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./src/assets/MNPublishingLogo512.png",
     "userInterfaceStyle": "light",
@@ -24,6 +24,9 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "co.foodsnow.MealzNow",
+      "runtimeVersion": {
+        "policy": "sdkVersion"
+      },
       "config": {
         "googleMapsApiKey": "AIzaSyDDBLnxNZqy3oW5zwMOP1SgsoGsa6TSHtc"
       },
@@ -46,7 +49,7 @@
         }
       },
       "package": "co.foodsnow.MealzNow",
-      "versionCode": 5
+      "versionCode": 6
     },
     "web": {
       "bundler": "metro",

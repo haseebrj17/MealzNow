@@ -1,18 +1,17 @@
-import { configureStore } from '@reduxjs/toolkit';
+// store.ts
+import {configureStore} from '@reduxjs/toolkit';
 import rootReducer from './features/RootState';
-import Reactotron from '../ReactotronConfig';
+// import reactotron from '../ReactotronConfig'; // Make sure the path is correct
 
 export const store = configureStore({
-  reducer: rootReducer,
-  enhancers: (__DEV__ && Reactotron.createEnhancer) ? [Reactotron.createEnhancer()] : [],
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        // Ignore these action types in the serializableCheck middleware
-        // if you encounter actions that are non-serializable.
-        ignoredActions: ['your_non_serializable_action_type'],
-      },
-    }),
+    reducer: rootReducer,
+    // enhancers: (__DEV__ && reactotron?.createEnhancer) ? [reactotron.createEnhancer()] : [],
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: ['your_non_serializable_action_type'],
+            },
+        }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

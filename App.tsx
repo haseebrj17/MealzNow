@@ -9,9 +9,8 @@ import { config } from "@gluestack-ui/config";
 import { RealmProvider } from '@realm/react';
 import initializeRealm from './src/db/Db';
 import LoadingOverlay from './src/components/LoadingOverlay';
-import './ReactotronConfig'; // Make sure this is the first import
+// import './ReactotronConfig'; // Make sure this is the first import
 import { Platform } from 'react-native';
-
 
 const App = () => {
 
@@ -21,7 +20,7 @@ const App = () => {
     async function setup() {
       try {
 
-        if (Platform.OS !== 'web') {
+        if (Platform.OS === 'ios' || Platform.OS === 'android') {
           await initializeRealm();
           setRealmReady(true);
         }

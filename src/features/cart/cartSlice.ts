@@ -34,7 +34,7 @@ const initialCartState: Cart = {
     },
     customerOrderPayment: {
         paymentType: 'COD',
-        orderType: 'Delivery'
+        orderType: 1
     }
 };
 

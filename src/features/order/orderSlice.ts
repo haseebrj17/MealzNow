@@ -1,112 +1,112 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { StorageService } from "../../services";
 import { setFlashMessage } from "../flashMessages/flashMessageSlice";
-import {
-    insertCustomerOrderPayment,
-    insertCustomerOrderPromo,
-    insertCustomerOrderedPackage,
-    insertProductByDay,
-    insertProductByTiming,
-} from "../../db/methods/cartNestedOperations";
-import { insertIntoCart } from "../../db/methods/cartOperations";
-
-export const insertCustomerOrderThunk = createAsyncThunk(
-    "order/insertCustomerOrder",
-    async (orderData: {
-        orderId: string;
-        totalBill: number;
-        totalItems: number;
-        orderDeliveryDateTime: string;
-        instructions: string;
-        customerId: string;
-        customerAddressId: string;
-        franchiseId: string;
-        orderStatus: string;
-        customerOrderedPackageId: string;
-        customerOrderPromoId?: string;
-        customerOrderPaymentId?: string;
-    }) => {
-        const result = await insertIntoCart(orderData);
-        return result;
-    }
-);
-
-export const insertCustomerOrderedPackageThunk = createAsyncThunk(
-    "order/insertCustomerOrderedPackage",
-    async (customerOrderedPackageData: {
-        customerOrderedPackageId: string;
-        packageId: string;
-        packageName: string;
-        totalNumberOfMeals: number;
-        numberOfDays: number;
-    }) => {
-        const result = await insertCustomerOrderedPackage(
-            customerOrderedPackageData
-        );
-        return result;
-    }
-);
-
-export const insertCustomerOrderPromoThunk = createAsyncThunk(
-    "order/insertCustomerOrderPromo",
-    async (customerOrderPromoData: {
-        customerOrderPromoId: string;
-        type: string;
-        name: string;
-        percent: string;
-    }) => {
-        const result = await insertCustomerOrderPromo(customerOrderPromoData);
-        return result;
-    }
-);
-
-
-export const insertCustomerOrderPaymentThunk = createAsyncThunk(
-    "order/insertCustomerOrderPayment",
-    async (paymentData: {
-        paymentType: string;
-        orderType: string
-    }) => {
-        const result = await insertCustomerOrderPayment(paymentData);
-        return result;
-    }
-);
-
-export const insertProductByDayThunk = createAsyncThunk(
-    "order/insertProductByDay",
-    async (productByDayData: {
-        dayId: string,
-        day: string,
-        deliveryDate: string,
-        orderId: string
-    }) => {
-        const result = await insertProductByDay(productByDayData);
-        return result;
-    }
-);
-
-export const insertProductByTimingThunk = createAsyncThunk(
-    "order/insertProductByTiming",
-    async (productByTimingData: {
-        productTimingId: string,
-        dayId?: string,
-        timeOfDayId: string,
-        fulfilled: number,
-        timeOfDay: string,
-        deliveryTimings: string,
-        name: string,
-        detail: string,
-        estimatedDeliveryTime?: string,
-        spiceLevel?: number,
-        type?: string,
-        ingredientSummary: string,
-        image: string,
-        price: number
-    }) => {
-        const result = await insertProductByTiming(productByTimingData);
-        return result;
-    }
-);
+// import {
+//     insertCustomerOrderPayment,
+//     insertCustomerOrderPromo,
+//     insertCustomerOrderedPackage,
+//     insertProductByDay,
+//     insertProductByTiming,
+// } from "../../db/methods/cartNestedOperations";
+// import { insertIntoCart } from "../../db/methods/cartOperations";
+//
+// export const insertCustomerOrderThunk = createAsyncThunk(
+//     "order/insertCustomerOrder",
+//     async (orderData: {
+//         orderId: string;
+//         totalBill: number;
+//         totalItems: number;
+//         orderDeliveryDateTime: string;
+//         instructions: string;
+//         customerId: string;
+//         customerAddressId: string;
+//         franchiseId: string;
+//         orderStatus: string;
+//         customerOrderedPackageId: string;
+//         customerOrderPromoId?: string;
+//         customerOrderPaymentId?: string;
+//     }) => {
+//         const result = await insertIntoCart(orderData);
+//         return result;
+//     }
+// );
+//
+// export const insertCustomerOrderedPackageThunk = createAsyncThunk(
+//     "order/insertCustomerOrderedPackage",
+//     async (customerOrderedPackageData: {
+//         customerOrderedPackageId: string;
+//         packageId: string;
+//         packageName: string;
+//         totalNumberOfMeals: number;
+//         numberOfDays: number;
+//     }) => {
+//         const result = await insertCustomerOrderedPackage(
+//             customerOrderedPackageData
+//         );
+//         return result;
+//     }
+// );
+//
+// export const insertCustomerOrderPromoThunk = createAsyncThunk(
+//     "order/insertCustomerOrderPromo",
+//     async (customerOrderPromoData: {
+//         customerOrderPromoId: string;
+//         type: string;
+//         name: string;
+//         percent: string;
+//     }) => {
+//         const result = await insertCustomerOrderPromo(customerOrderPromoData);
+//         return result;
+//     }
+// );
+//
+//
+// export const insertCustomerOrderPaymentThunk = createAsyncThunk(
+//     "order/insertCustomerOrderPayment",
+//     async (paymentData: {
+//         paymentType: string;
+//         orderType: string
+//     }) => {
+//         const result = await insertCustomerOrderPayment(paymentData);
+//         return result;
+//     }
+// );
+//
+// export const insertProductByDayThunk = createAsyncThunk(
+//     "order/insertProductByDay",
+//     async (productByDayData: {
+//         dayId: string,
+//         day: string,
+//         deliveryDate: string,
+//         orderId: string
+//     }) => {
+//         const result = await insertProductByDay(productByDayData);
+//         return result;
+//     }
+// );
+//
+// export const insertProductByTimingThunk = createAsyncThunk(
+//     "order/insertProductByTiming",
+//     async (productByTimingData: {
+//         productTimingId: string,
+//         dayId?: string,
+//         timeOfDayId: string,
+//         fulfilled: number,
+//         timeOfDay: string,
+//         deliveryTimings: string,
+//         name: string,
+//         detail: string,
+//         estimatedDeliveryTime?: string,
+//         spiceLevel?: number,
+//         type?: string,
+//         ingredientSummary: string,
+//         image: string,
+//         price: number
+//     }) => {
+//         const result = await insertProductByTiming(productByTimingData);
+//         return result;
+//     }
+// );
 
 interface CustomerOrderedPackage {
     packageId: string;
